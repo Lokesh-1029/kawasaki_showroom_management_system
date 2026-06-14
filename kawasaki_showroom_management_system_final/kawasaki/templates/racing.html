@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Racing - Kawasaki</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .navbar {
+            background: black;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar-brand {
+            color: #00ff00 !important;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #8B0000 0%, #CC0000 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+        }
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .hero-section h1 i {
+            margin-right: 15px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: #ff0000;
+        }
+
+        /* Racing Bikes */
+        .bike-section {
+            padding: 60px 0;
+            background: white;
+        }
+        .race-bike-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            margin-bottom: 30px;
+        }
+        .race-bike-card:hover {
+            transform: translateY(-10px);
+        }
+        .race-bike-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        .race-bike-card .info {
+            padding: 20px;
+        }
+        .race-bike-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        .race-bike-card .specs {
+            color: #ff0000;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+        .race-bike-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Championship Section */
+        .championship-section {
+            padding: 60px 0;
+            background: #f0f2f5;
+        }
+        .champ-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 25px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .champ-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .champ-card i {
+            font-size: 50px;
+            color: #ff0000;
+            margin-bottom: 15px;
+        }
+        .champ-card .year {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff0000;
+        }
+        .champ-card h4 {
+            margin: 10px 0;
+        }
+
+        /* Team Section */
+        .team-section {
+            padding: 60px 0;
+            background: white;
+        }
+        .rider-card {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            transition: 0.3s;
+        }
+        .rider-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .rider-card img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid #ff0000;
+        }
+        .rider-card h4 {
+            margin-bottom: 5px;
+        }
+        .rider-card .title {
+            color: #ff0000;
+            font-size: 0.85rem;
+        }
+
+        /* Upcoming Races */
+        .race-schedule {
+            padding: 60px 0;
+            background: #f0f2f5;
+        }
+        .race-item {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .race-date {
+            background: #ff0000;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 100px;
+        }
+        .race-date .day {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .race-info {
+            flex: 1;
+            margin-left: 20px;
+        }
+        .race-info h4 {
+            margin-bottom: 5px;
+        }
+        .race-location {
+            color: #666;
+            font-size: 0.85rem;
+        }
+        .race-status {
+            background: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .footer {
+            background: #1a1a1a;
+            color: #888;
+            padding: 50px 0 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 { font-size: 2rem; }
+            .race-item { flex-direction: column; text-align: center; }
+            .race-info { margin-left: 0; margin-top: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/home">
+                <i class="fas fa-motorcycle"></i> KAWASAKI
+            </a>
+            <div>
+                <a href="/home" class="btn btn-outline-light me-2">Back to Home</a>
+                <a href="/logout" class="btn btn-outline-danger">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1><i class="fas fa-flag-checkered"></i> KAWASAKI RACING</h1>
+            <p>Born from Racing - Powered by Champions | 20+ World Championships</p>
+        </div>
+    </section>
+
+    <!-- Racing Bikes Section -->
+    <section class="bike-section">
+        <div class="container">
+            <h2 class="section-title">Race-Ready Machines</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="race-bike-card" onclick="redirectToLogin()">
+                        <img src="https://cdn-fastly.motorcycle.com/media/2025/11/03/12013/s-2026-kawasaki-ninja-zx-10r-and-zx-10rr-first-look-gallery.jpg?size=720x845&nocrop=1" alt="Ninja ZX-10RR">
+                        <div class="info">
+                            <h3>Ninja ZX-10RR</h3>
+                            <div class="specs">998cc | 204 HP | WorldSBK Champion</div>
+                            <p>6-time WorldSBK Championship winning machine. The most successful superbike in recent history.</p>
+                            <span class="badge bg-danger">6 Championships</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="race-bike-card" onclick="redirectToLogin()">
+                        <img src="https://shop.carbonin.com/wp-content/uploads/2020/04/kawasaki-ninja400-2020-race-carbonin-1024x710.jpg" alt="Ninja 400 Race">
+                        <div class="info">
+                            <h3>Ninja 400 Race</h3>
+                            <div class="specs">399cc | 45 HP | Supersport 300 Champion</div>
+                            <p>Dominant force in Supersport 300 class worldwide. Perfect entry into racing.</p>
+                            <span class="badge bg-danger">3 Championships</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="race-bike-card" onclick="redirectToLogin()">
+                        <img src="https://cdn.bikedekho.com/processedimages/kawasaki/ninja-h2-r/source/ninja-h2-r684806026febe.jpg" alt="Ninja H2R">
+                        <div class="info">
+                            <h3>Ninja H2R</h3>
+                            <div class="specs">998cc Supercharged | 310 HP | Track Only</div>
+                            <p>The ultimate track weapon with supercharged power. World's most powerful production motorcycle.</p>
+                            <span class="badge bg-danger">Track Record Holder</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Championships Section -->
+    <section class="championship-section">
+        <div class="container">
+            <h2 class="section-title">World Championships</h2>
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="champ-card" onclick="showChampDetail('WorldSBK', 6, '2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020')">
+                        <i class="fas fa-trophy"></i>
+                        <div class="year">6</div>
+                        <h4>WorldSBK</h4>
+                        <p>Manufacturer Championships</p>
+                        <small>Click for details →</small>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="champ-card" onclick="showChampDetail('WorldSBK Riders', 9, 'Scott Russell, Jonathan Rea (6x), Toprak Razgatlıoğlu (2021)')">
+                        <i class="fas fa-user-tie"></i>
+                        <div class="year">9</div>
+                        <h4>Riders' Titles</h4>
+                        <p>WorldSBK Championships</p>
+                        <small>Click for details →</small>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="champ-card" onclick="showChampDetail('Supersport 300', 3, 'Kawasaki Ninja 400 dominates Supersport 300 class globally')">
+                        <i class="fas fa-trophy"></i>
+                        <div class="year">3</div>
+                        <h4>Supersport 300</h4>
+                        <p>World Championships</p>
+                        <small>Click for details →</small>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="champ-card" onclick="showChampDetail('National Titles', 50, 'Kawasaki has won countless national championships across AMA, BSB, CIV, IDM, and more.')">
+                        <i class="fas fa-flag-checkered"></i>
+                        <div class="year">50+</div>
+                        <h4>National Titles</h4>
+                        <p>Worldwide</p>
+                        <small>Click for details →</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Factory Riders -->
+    <section class="team-section">
+        <div class="container">
+            <h2 class="section-title">Kawasaki Racing Team</h2>
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="rider-card" onclick="redirectToLogin()">
+                        <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Jonathan Rea">
+                        <h4>Jonathan Rea</h4>
+                        <div class="title">6x WorldSBK Champion</div>
+                        <p>Most successful rider in WorldSBK history</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="rider-card" onclick="redirectToLogin()">
+                        <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="Alex Lowes">
+                        <h4>Alex Lowes</h4>
+                        <div class="title">WorldSBK Race Winner</div>
+                        <p>Multiple podium finishes</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="rider-card" onclick="redirectToLogin()">
+                        <img src="https://randomuser.me/api/portraits/men/3.jpg" alt="Scott Russell">
+                        <h4>Scott Russell</h4>
+                        <div class="title">1993 WorldSBK Champion</div>
+                        <p>Kawasaki legend - "Mr. Daytona"</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="rider-card" onclick="redirectToLogin()">
+                        <img src="https://randomuser.me/api/portraits/men/4.jpg" alt="Randy Mamola">
+                        <h4>Randy Mamola</h4>
+                        <div class="title">MotoGP Legend</div>
+                        <p>4x 500cc runner-up</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upcoming Races -->
+    <section class="race-schedule">
+        <div class="container">
+            <h2 class="section-title">2026 Race Calendar</h2>
+            <div class="race-item">
+                <div class="race-date">
+                    <div class="day">Apr 15-17</div>
+                    <div>2026</div>
+                </div>
+                <div class="race-info">
+                    <h4>WorldSBK Round 1</h4>
+                    <div class="race-location">Phillip Island, Australia</div>
+                </div>
+                <div class="race-status">Upcoming</div>
+            </div>
+            <div class="race-item">
+                <div class="race-date">
+                    <div class="day">May 20-22</div>
+                    <div>2026</div>
+                </div>
+                <div class="race-info">
+                    <h4>Indian National Racing Championship</h4>
+                    <div class="race-location">Buddh International Circuit, India</div>
+                </div>
+                <div class="race-status">Tickets Available</div>
+            </div>
+            <div class="race-item">
+                <div class="race-date">
+                    <div class="day">Jun 10-12</div>
+                    <div>2026</div>
+                </div>
+                <div class="race-info">
+                    <h4>WorldSBK Round 3</h4>
+                    <div class="race-location">Misano, Italy</div>
+                </div>
+                <div class="race-status">Coming Soon</div>
+            </div>
+            <div class="race-item">
+                <div class="race-date">
+                    <div class="day">Jul 8-10</div>
+                    <div>2026</div>
+                </div>
+                <div class="race-info">
+                    <h4>WorldSBK Round 5</h4>
+                    <div class="race-location">Donington Park, UK</div>
+                </div>
+                <div class="race-status">Coming Soon</div>
+            </div>
+            <div class="text-center mt-4">
+                <button class="btn btn-danger btn-lg" onclick="redirectToLogin()">
+                    <i class="fas fa-ticket-alt"></i> Book Tickets
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Race Results -->
+    <section class="team-section" style="background: #f0f2f5;">
+        <div class="container">
+            <h2 class="section-title">Recent Race Results</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="champ-card">
+                        <i class="fas fa-trophy" style="color: #ffd700;"></i>
+                        <h4>🏆 2024 WorldSBK</h4>
+                        <p>Kawasaki wins 3 races | 12 podiums</p>
+                        <hr>
+                        <small>Toprak Razgatlıoğlu - 6 wins</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="champ-card">
+                        <i class="fas fa-flag-checkered"></i>
+                        <h4>🥈 2024 Indian National Championship</h4>
+                        <p>Kawasaki takes 1st & 2nd place</p>
+                        <hr>
+                        <small>Ninja 400 dominates SS300 class</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal for Championship Details -->
+    <div class="modal fade" id="champModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <i class="fas fa-trophy" style="color: #ffd700; font-size: 24px; margin-right: 10px;"></i>
+                    <h5 class="modal-title" id="champModalTitle">Championship Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="champModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" onclick="redirectToLogin()">Get Tickets</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Kawasaki Motors India. Let the Good Times Roll.</p>
+            <div class="mt-2">
+                <small>Kawasaki Racing | Born from Racing | 20+ World Championships</small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showChampDetail(title, count, details) {
+            document.getElementById('champModalTitle').innerHTML = `${title}`;
+            document.getElementById('champModalBody').innerHTML = `
+                <div class="text-center mb-3">
+                    <i class="fas fa-trophy" style="font-size: 64px; color: #ffd700;"></i>
+                </div>
+                <h3 class="text-center">${count} Championships</h3>
+                <p class="text-center">${title}</p>
+                <hr>
+                <p><strong>Details:</strong> ${details}</p>
+                <p class="text-muted mt-3">Kawasaki continues to dominate racing circuits worldwide with unparalleled performance and engineering excellence.</p>
+            `;
+            new bootstrap.Modal(document.getElementById('champModal')).show();
+        }
+
+        function redirectToLogin() {
+            fetch('/check_session')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        alert("Thank you for your interest! Our team will contact you with ticket and event details.");
+                        window.location.href = '/dashboard';
+                    } else {
+                        sessionStorage.setItem('redirectAfterLogin', '/racing');
+                        window.location.href = '/login';
+                    }
+                })
+                .catch(() => {
+                    sessionStorage.setItem('redirectAfterLogin', '/racing');
+                    window.location.href = '/login';
+                });
+        }
+    </script>
+</body>
+</html>

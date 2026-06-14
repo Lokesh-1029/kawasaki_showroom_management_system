@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Tools - Kawasaki</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background: #f5f5f5; font-family: 'Segoe UI', sans-serif; }
+        .navbar { background: black; padding: 15px 0; }
+        .navbar-brand { color: #00ff00 !important; font-size: 24px; font-weight: bold; }
+        .page-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        .tool-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: 0.3s;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        .tool-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+        .tool-card i { font-size: 50px; color: #00ff00; margin-bottom: 20px; }
+        .tool-card h3 { font-size: 1.3rem; margin-bottom: 10px; }
+        .btn-tool { background: #00ff00; color: black; border: none; padding: 10px 25px; border-radius: 25px; margin-top: 15px; font-weight: bold; }
+        .btn-tool:hover { background: #00cc00; }
+        .emi-calculator, .loan-assistance, .insurance-calculator {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            display: none;
+        }
+        .active-tool {
+            display: block;
+        }
+        .result-box { background: #f8f9fa; padding: 20px; border-radius: 10px; margin-top: 20px; }
+        .bank-card, .insurance-company-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .bank-card:hover, .insurance-company-card:hover {
+            border-color: #00ff00;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .bank-card .bank-name, .insurance-company-card .company-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .bank-card .offer, .insurance-company-card .offer {
+            color: #00ff00;
+            font-weight: bold;
+        }
+        .footer { background: #1a1a1a; color: #888; padding: 50px 0 20px; margin-top: 50px; }
+        .form-control:focus { border-color: #00ff00; box-shadow: 0 0 0 0.2rem rgba(0,255,0,0.25); }
+        .tool-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tool-btn {
+            background: #e0e0e0;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .tool-btn.active {
+            background: #00ff00;
+            color: black;
+        }
+        .tool-btn:hover {
+            background: #00cc00;
+        }
+        
+        /* Modal Styles */
+        .modal-custom {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-custom.active {
+            display: flex;
+        }
+        .modal-content-custom {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .modal-header-custom {
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .payment-method:hover {
+            border-color: #00ff00;
+        }
+        .payment-method.selected {
+            border-color: #00ff00;
+            background: #e8f5e9;
+        }
+        .payment-method i {
+            font-size: 28px;
+            margin-right: 15px;
+        }
+        .btn-pay {
+            background: #00ff00;
+            color: black;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/dashboard">
+            <i class="fas fa-motorcycle"></i> Kawasaki Showroom
+        </a>
+        <div>
+            <a href="/home" class="btn btn-outline-light me-2">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="/dashboard" class="btn btn-outline-light me-2">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="/logout" class="btn btn-outline-danger">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+</nav>
+
+    <div class="page-header">
+        <div class="container">
+            <h1><i class="fas fa-calculator"></i> Purchase Tools</h1>
+            <p>EMI Calculator, Loan Assistance & Insurance Calculator</p>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <!-- Tool Selector Buttons -->
+        <div class="tool-selector">
+            <button class="tool-btn active" onclick="showTool('emi')">
+                <i class="fas fa-calculator"></i> EMI Calculator
+            </button>
+            <button class="tool-btn" onclick="showTool('loan')">
+                <i class="fas fa-file-invoice-dollar"></i> Loan Assistance
+            </button>
+            <button class="tool-btn" onclick="showTool('insurance')">
+                <i class="fas fa-shield-alt"></i> Insurance Calculator
+            </button>
+        </div>
+
+        <!-- EMI Calculator Tool -->
+        <div id="emiTool" class="emi-calculator active-tool">
+            <h3><i class="fas fa-calculator"></i> EMI Calculator</h3>
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label">Bike Price (₹)</label>
+                    <input type="number" id="loanAmount" class="form-control" placeholder="Enter bike price" value="550000">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Down Payment (₹)</label>
+                    <input type="number" id="downPayment" class="form-control" placeholder="Down payment" value="50000">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Interest Rate (%)</label>
+                    <input type="number" id="interestRate" class="form-control" placeholder="Interest rate" value="9.5" step="0.1">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Loan Tenure (Years)</label>
+                    <select id="tenure" class="form-control">
+                        <option value="1">1 Year</option>
+                        <option value="2">2 Years</option>
+                        <option value="3" selected>3 Years</option>
+                        <option value="4">4 Years</option>
+                        <option value="5">5 Years</option>
+                    </select>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <button class="btn btn-success w-100" onclick="calculateEMI()">Calculate EMI</button>
+                </div>
+            </div>
+            <div id="emiResult" class="result-box">
+                <h4>EMI Details</h4>
+                <p>Loan Amount: ₹<span id="loanAmt">500,000</span></p>
+                <p>Monthly EMI: ₹<span id="monthlyEMI">0</span></p>
+                <p>Total Interest Payable: ₹<span id="totalInterest">0</span></p>
+                <p>Total Amount Payable: ₹<span id="totalAmount">0</span></p>
+            </div>
+        </div>
+
+        <!-- Loan Assistance Tool -->
+        <div id="loanTool" class="loan-assistance">
+            <h3><i class="fas fa-file-invoice-dollar"></i> Loan Assistance</h3>
+            <p>Apply for a loan from our partner banks with attractive interest rates</p>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label>Select Bike Model</label>
+                        <select id="loanBike" class="form-control" onchange="updateLoanAmount()">
+                            <option value="0">-- Select your bike --</option>
+                            <option value="550000">Ninja 400 - ₹5,50,000</option>
+                            <option value="720000">Ninja 650 - ₹7,20,000</option>
+                            <option value="930000">Z900 - ₹9,30,000</option>
+                            <option value="3500000">Ninja H2 - ₹35,00,000</option>
+                            <option value="750000">Versys 650 - ₹7,50,000</option>
+                            <option value="880000">Vulcan 900 - ₹8,80,000</option>
+                            <option value="395000">KLX230 - ₹3,95,000</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label>Your Monthly Income (₹)</label>
+                        <input type="number" id="monthlyIncome" class="form-control" placeholder="Enter monthly income" value="50000">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label>Down Payment (₹)</label>
+                        <input type="number" id="loanDownPayment" class="form-control" placeholder="Down payment" value="50000">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label>Preferred Tenure (Years)</label>
+                        <select id="loanTenure" class="form-control">
+                            <option value="1">1 Year</option>
+                            <option value="2">2 Years</option>
+                            <option value="3" selected>3 Years</option>
+                            <option value="4">4 Years</option>
+                            <option value="5">5 Years</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-success w-100" onclick="calculateLoanEligibility()">Check Loan Eligibility</button>
+            
+            <div id="loanResult" class="result-box" style="display: none;">
+                <!-- Results will appear here -->
+            </div>
+            
+            <h4 class="mt-4">Partner Banks & Offers</h4>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="bank-card" onclick="applyLoan('SBI')">
+                        <div class="bank-name">🏦 State Bank of India</div>
+                        <div class="offer">Interest Rate: 8.5% - 9.5%</div>
+                        <small>Up to 90% funding | No processing fee</small>
+                        <div class="text-success mt-2">Click to Apply →</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="bank-card" onclick="applyLoan('HDFC Bank')">
+                        <div class="bank-name">🏦 HDFC Bank</div>
+                        <div class="offer">Interest Rate: 8.75% - 9.75%</div>
+                        <small>Instant approval | Minimal documentation</small>
+                        <div class="text-success mt-2">Click to Apply →</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="bank-card" onclick="applyLoan('ICICI Bank')">
+                        <div class="bank-name">🏦 ICICI Bank</div>
+                        <div class="offer">Interest Rate: 8.9% - 9.9%</div>
+                        <small>Quick disbursal | Flexible EMI options</small>
+                        <div class="text-success mt-2">Click to Apply →</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insurance Calculator Tool with Companies -->
+        <div id="insuranceTool" class="insurance-calculator">
+            <h3><i class="fas fa-shield-alt"></i> Insurance Calculator</h3>
+            <p>Compare and buy insurance from top companies</p>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label>Select Bike Model</label>
+                        <select id="insuranceBike" class="form-control" onchange="calculateInsurance()">
+                            <option value="0">-- Select your bike --</option>
+                            <option value="550000">Ninja 400 - ₹5,50,000</option>
+                            <option value="720000">Ninja 650 - ₹7,20,000</option>
+                            <option value="930000">Z900 - ₹9,30,000</option>
+                            <option value="3500000">Ninja H2 - ₹35,00,000</option>
+                            <option value="750000">Versys 650 - ₹7,50,000</option>
+                            <option value="880000">Vulcan 900 - ₹8,80,000</option>
+                            <option value="395000">KLX230 - ₹3,95,000</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label>Manufacturing Year</label>
+                        <select id="manufacturingYear" class="form-control" onchange="calculateInsurance()">
+                            <option value="2026">2026</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label>Coverage Type</label>
+                        <select id="coverageType" class="form-control" onchange="calculateInsurance()">
+                            <option value="comprehensive">Comprehensive (Recommended)</option>
+                            <option value="thirdparty">Third Party Only</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label>No Claim Bonus (NCB) %</label>
+                        <select id="ncb" class="form-control" onchange="calculateInsurance()">
+                            <option value="0">0% (No NCB)</option>
+                            <option value="20">20% (1 year claim free)</option>
+                            <option value="25">25% (2 years claim free)</option>
+                            <option value="35">35% (3 years claim free)</option>
+                            <option value="45">45% (4 years claim free)</option>
+                            <option value="50">50% (5+ years claim free)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="insuranceResult" class="result-box">
+                <h4>Insurance Quotes from Top Companies</h4>
+                <div id="companyQuotes"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Insurance Application Modal -->
+    <div id="insuranceModal" class="modal-custom">
+        <div class="modal-content-custom">
+            <div class="modal-header-custom">
+                <h4><i class="fas fa-file-alt"></i> Insurance Application</h4>
+                <button class="btn-close" onclick="closeModal()"></button>
+            </div>
+            <div id="applicationForm"></div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal-custom">
+        <div class="modal-content-custom">
+            <div class="modal-header-custom">
+                <h4><i class="fas fa-credit-card"></i> Secure Payment</h4>
+                <button class="btn-close" onclick="closePaymentModal()"></button>
+            </div>
+            <div id="paymentDetails"></div>
+            <h5>Select Payment Method</h5>
+            <div class="payment-method" onclick="selectPaymentMethod(this, 'card')">
+                <i class="fas fa-credit-card"></i>
+                <div><strong>💳 Credit/Debit Card</strong><div><small>Visa, MasterCard, RuPay, Amex</small></div></div>
+            </div>
+            <div class="payment-method" onclick="selectPaymentMethod(this, 'upi')">
+                <i class="fas fa-mobile-alt"></i>
+                <div><strong>📱 UPI / QR Code</strong><div><small>Google Pay, PhonePe, Paytm</small></div></div>
+            </div>
+            <div class="payment-method" onclick="selectPaymentMethod(this, 'netbanking')">
+                <i class="fas fa-university"></i>
+                <div><strong>🏦 Net Banking</strong><div><small>All major banks</small></div></div>
+            </div>
+            <button class="btn-pay" onclick="completePayment()">Pay Now</button>
+            <button class="btn btn-secondary w-100 mt-2" onclick="closePaymentModal()">Cancel</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container text-center">
+            <p>&copy; 2026 Kawasaki Motors India. Let the Good Times Roll.</p>
+        </div>
+    </footer>
+
+    <script>
+        let selectedCompany = null;
+        let selectedPremium = 0;
+        let selectedPaymentMethod = null;
+        let selectedInsuranceCompany = null;
+
+        function showTool(tool) {
+            document.getElementById('emiTool').style.display = 'none';
+            document.getElementById('loanTool').style.display = 'none';
+            document.getElementById('insuranceTool').style.display = 'none';
+            
+            if (tool === 'emi') {
+                document.getElementById('emiTool').style.display = 'block';
+            } else if (tool === 'loan') {
+                document.getElementById('loanTool').style.display = 'block';
+            } else {
+                document.getElementById('insuranceTool').style.display = 'block';
+                calculateInsurance();
+            }
+            
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function calculateEMI() {
+            let price = parseFloat(document.getElementById('loanAmount').value);
+            let downPayment = parseFloat(document.getElementById('downPayment').value);
+            let rate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
+            let years = parseInt(document.getElementById('tenure').value);
+            let months = years * 12;
+            
+            let loanAmount = price - downPayment;
+            if (loanAmount <= 0) {
+                alert('Loan amount cannot be zero or negative!');
+                return;
+            }
+            
+            let emi = (loanAmount * rate * Math.pow(1 + rate, months)) / (Math.pow(1 + rate, months) - 1);
+            let totalAmount = emi * months;
+            let totalInterest = totalAmount - loanAmount;
+            
+            document.getElementById('loanAmt').innerText = loanAmount.toLocaleString();
+            document.getElementById('monthlyEMI').innerText = emi.toFixed(2).toLocaleString();
+            document.getElementById('totalInterest').innerText = totalInterest.toFixed(2).toLocaleString();
+            document.getElementById('totalAmount').innerText = totalAmount.toFixed(2).toLocaleString();
+        }
+        
+        function calculateLoanEligibility() {
+            const bikePrice = parseFloat(document.getElementById('loanBike').value);
+            const income = parseFloat(document.getElementById('monthlyIncome').value);
+            const downPayment = parseFloat(document.getElementById('loanDownPayment').value);
+            const tenure = parseInt(document.getElementById('loanTenure').value);
+            
+            if (!bikePrice || bikePrice === 0) {
+                document.getElementById('loanResult').style.display = 'none';
+                return;
+            }
+            
+            const loanAmount = bikePrice - downPayment;
+            const maxEligibleEMI = income * 0.4;
+            const rate = 0.095 / 12;
+            const months = tenure * 12;
+            
+            const emi = (loanAmount * rate * Math.pow(1 + rate, months)) / (Math.pow(1 + rate, months) - 1);
+            const eligible = emi <= maxEligibleEMI;
+            
+            document.getElementById('loanResult').style.display = 'block';
+            document.getElementById('loanResult').innerHTML = `
+                <h4>Loan Eligibility Result</h4>
+                <p><strong>Bike Price:</strong> ₹${bikePrice.toLocaleString()}</p>
+                <p><strong>Loan Amount:</strong> ₹${loanAmount.toLocaleString()}</p>
+                <p><strong>Estimated EMI:</strong> ₹${emi.toFixed(2).toLocaleString()}</p>
+                <div class="alert ${eligible ? 'alert-success' : 'alert-danger'} mt-3">
+                    <i class="fas ${eligible ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+                    ${eligible ? 'Congratulations! You are eligible for this loan.' : 'Sorry, you are not eligible for this loan amount.'}
+                </div>
+            `;
+        }
+        
+        function applyLoan(bankName) {
+            fetch('/check_session')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        alert(`Thank you for choosing ${bankName}!\n\nOur representative will contact you within 24 hours.`);
+                    } else {
+                        sessionStorage.setItem('redirectAfterLogin', '/purchase_tools');
+                        window.location.href = '/login';
+                    }
+                });
+        }
+        
+        function calculateInsurance() {
+            const bikePrice = parseFloat(document.getElementById('insuranceBike').value);
+            const year = parseInt(document.getElementById('manufacturingYear').value);
+            const coverage = document.getElementById('coverageType').value;
+            const ncb = parseInt(document.getElementById('ncb').value);
+            
+            if (!bikePrice || bikePrice === 0) {
+                document.getElementById('companyQuotes').innerHTML = '<p class="text-muted">Please select a bike model</p>';
+                return;
+            }
+            
+            const currentYear = 2026;
+            const age = currentYear - year;
+            let depreciation = Math.min(age * 10, 50);
+            let idv = bikePrice * (1 - depreciation / 100);
+            
+            const companies = [
+                { name: "ICICI Lombard", logo: "🏦", rating: "4.8", claims: "98%", premium: idv * 0.025, features: "Zero Depreciation, RSA included" },
+                { name: "Bajaj Allianz", logo: "🛡️", rating: "4.7", claims: "97%", premium: idv * 0.023, features: "24x7 Spot Assistance" },
+                { name: "HDFC ERGO", logo: "🏦", rating: "4.9", claims: "99%", premium: idv * 0.028, features: "Cashless Garages Pan India" },
+                { name: "Tata AIG", logo: "🏢", rating: "4.6", claims: "96%", premium: idv * 0.024, features: "Quick Claim Settlement" },
+                { name: "New India Assurance", logo: "🇮🇳", rating: "4.5", claims: "95%", premium: idv * 0.022, features: "Government Backed" },
+                { name: "Royal Sundaram", logo: "👑", rating: "4.4", claims: "94%", premium: idv * 0.021, features: "Affordable Premiums" }
+            ];
+            
+            let html = '<div class="row">';
+            companies.forEach(company => {
+                let finalPremium = company.premium;
+                if (coverage === 'thirdparty') {
+                    finalPremium = 1200;
+                }
+                finalPremium = finalPremium * (1 - ncb / 100);
+                finalPremium = finalPremium + (finalPremium * 0.18);
+                
+                html += `
+                    <div class="col-md-6">
+                        <div class="insurance-company-card" onclick="openApplicationForm('${company.name}', ${Math.round(finalPremium)})">
+                            <div class="company-name">${company.logo} ${company.name}</div>
+                            <div class="offer">⭐ ${company.rating} | Claim Settlement: ${company.claims}</div>
+                            <div class="text-success fw-bold mt-2">Premium: ₹${Math.round(finalPremium)}</div>
+                            <small>${company.features}</small>
+                            <div class="text-success mt-2">Click to Buy →</div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            document.getElementById('companyQuotes').innerHTML = html;
+        }
+        
+        function openApplicationForm(companyName, premium) {
+            selectedCompany = companyName;
+            selectedPremium = premium;
+            
+            const formHtml = `
+                <form id="insuranceForm">
+                    <h5>${companyName} - Insurance Application</h5>
+                    <hr>
+                    <div class="mb-3">
+                        <label>Full Name *</label>
+                        <input type="text" id="fullName" class="form-control" required placeholder="Enter your full name">
+                    </div>
+                    <div class="mb-3">
+                        <label>Email Address *</label>
+                        <input type="email" id="email" class="form-control" required placeholder="Enter your email">
+                    </div>
+                    <div class="mb-3">
+                        <label>Phone Number *</label>
+                        <input type="tel" id="phone" class="form-control" required placeholder="10-digit mobile number">
+                    </div>
+                    <div class="mb-3">
+                        <label>Address Line *</label>
+                        <input type="text" id="address" class="form-control" required placeholder="Enter your address">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label>City *</label>
+                                <input type="text" id="city" class="form-control" required placeholder="City">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label>Pincode *</label>
+                                <input type="text" id="pincode" class="form-control" required placeholder="Pincode">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label>Bike Registration Number *</label>
+                        <input type="text" id="regNumber" class="form-control" required placeholder="e.g., KA01AB1234">
+                    </div>
+                    <div class="mb-3">
+                        <label>Previous Insurance Policy Number (if any)</label>
+                        <input type="text" id="prevPolicy" class="form-control" placeholder="Optional">
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Premium Amount: ₹${selectedPremium}
+                    </div>
+                    <button type="button" class="btn btn-success w-100" onclick="submitApplication()">Proceed to Payment</button>
+                </form>
+            `;
+            
+            document.getElementById('applicationForm').innerHTML = formHtml;
+            document.getElementById('insuranceModal').classList.add('active');
+        }
+        
+        function submitApplication() {
+            const name = document.getElementById('fullName')?.value;
+            const email = document.getElementById('email')?.value;
+            const phone = document.getElementById('phone')?.value;
+            const address = document.getElementById('address')?.value;
+            const city = document.getElementById('city')?.value;
+            const pincode = document.getElementById('pincode')?.value;
+            const regNumber = document.getElementById('regNumber')?.value;
+            
+            if (!name || !email || !phone || !address || !city || !pincode || !regNumber) {
+                alert('Please fill all required fields!');
+                return;
+            }
+            
+            if (!/^\d{10}$/.test(phone)) {
+                alert('Please enter a valid 10-digit phone number!');
+                return;
+            }
+            
+            if (!/^\d{6}$/.test(pincode)) {
+                alert('Please enter a valid 6-digit pincode!');
+                return;
+            }
+            
+            closeModal();
+            showPaymentModal();
+        }
+        
+        function showPaymentModal() {
+            const paymentDetailsHtml = `
+                <div class="payment-detail">
+                    <p><strong>Insurance Company:</strong> ${selectedCompany}</p>
+                    <p><strong>Policy Type:</strong> Comprehensive</p>
+                    <p><strong>IDV Value:</strong> ₹${Math.round(selectedPremium / 1.18 / 0.025).toLocaleString()}</p>
+                    <hr>
+                    <p><strong>Premium Amount:</strong> ₹${selectedPremium}</p>
+                    <p><strong>GST (18%):</strong> ₹${Math.round(selectedPremium * 0.18)}</p>
+                    <p><strong style="color: #00ff00;">Total Amount:</strong> ₹${selectedPremium}</p>
+                </div>
+            `;
+            document.getElementById('paymentDetails').innerHTML = paymentDetailsHtml;
+            document.getElementById('paymentModal').classList.add('active');
+        }
+        
+        function selectPaymentMethod(element, method) {
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedPaymentMethod = method;
+        }
+        
+        function completePayment() {
+            if (!selectedPaymentMethod) {
+                alert('Please select a payment method!');
+                return;
+            }
+            
+            fetch('/check_session')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        alert(`✅ Payment Successful!\n\nInsurance Policy purchased from ${selectedCompany}\nPremium Paid: ₹${selectedPremium}\nPayment Method: ${selectedPaymentMethod.toUpperCase()}\n\nPolicy will be sent to your email within 24 hours.`);
+                        closePaymentModal();
+                        closeModal();
+                    } else {
+                        sessionStorage.setItem('redirectAfterLogin', '/purchase_tools');
+                        window.location.href = '/login';
+                    }
+                });
+        }
+        
+        function closeModal() {
+            document.getElementById('insuranceModal').classList.remove('active');
+        }
+        
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+            selectedPaymentMethod = null;
+        }
+        
+        calculateEMI();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

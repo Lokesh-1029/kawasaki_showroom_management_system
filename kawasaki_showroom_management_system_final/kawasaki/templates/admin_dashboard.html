@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Admin Dashboard - Kawasaki</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Light Mode (Default) */
+        body.light-mode {
+            background: #f0f2f5;
+            color: #333;
+        }
+        body.light-mode .sidebar,
+        body.light-mode .stat-card,
+        body.light-mode .table-container,
+        body.light-mode .chart-container,
+        body.light-mode .bulk-actions {
+            background: white;
+            color: #333;
+        }
+        
+        /* Dark Mode */
+        body.dark-mode {
+            background: #1a1a2e;
+            color: #e0e0e0;
+        }
+        body.dark-mode .sidebar {
+            background: #16213e;
+            color: #e0e0e0;
+        }
+        body.dark-mode .sidebar .nav-link {
+            color: #ccc;
+        }
+        body.dark-mode .sidebar .nav-link:hover {
+            background: #1e3c72;
+            color: #00ff00;
+        }
+        body.dark-mode .stat-card,
+        body.dark-mode .table-container,
+        body.dark-mode .chart-container,
+        body.dark-mode .bulk-actions {
+            background: #16213e;
+            color: #e0e0e0;
+        }
+        body.dark-mode .table {
+            color: #e0e0e0;
+        }
+        body.dark-mode .modal-content {
+            background: #16213e;
+            color: #e0e0e0;
+        }
+        body.dark-mode .form-control,
+        body.dark-mode .form-select {
+            background: #0f3460;
+            color: white;
+            border-color: #1e3c72;
+        }
+        
+        /* Common Styles */
+        * { box-sizing: border-box; }
+        
+        .navbar { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+        .navbar-brand { color: #00ff00 !important; font-weight: bold; font-size: 1.2rem; }
+        
+        /* Mobile Menu Button */
+        .hamburger {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            margin-right: 15px;
+            display: none;
+        }
+        
+        /* Sidebar */
+        .sidebar { 
+            background: white; 
+            min-height: calc(100vh - 70px); 
+            border-radius: 15px; 
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .hamburger { display: block; }
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                width: 280px;
+                height: 100%;
+                z-index: 1050;
+                border-radius: 0;
+                overflow-y: auto;
+            }
+            .sidebar.open { left: 0; }
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 1040;
+                display: none;
+            }
+            .sidebar-overlay.active { display: block; }
+            .col-md-3, .col-md-6, .col-md-9 { width: 100%; padding: 0; }
+            .stat-card { margin-bottom: 10px; }
+            .table-container { overflow-x: auto; }
+            .table { min-width: 600px; }
+        }
+        
+        @media (min-width: 769px) {
+            .hamburger, .sidebar-overlay { display: none; }
+            .sidebar { position: relative; left: 0; width: 100%; }
+        }
+        
+        .sidebar .nav-link { 
+            color: #333; 
+            padding: 12px 15px; 
+            border-radius: 10px; 
+            margin-bottom: 5px; 
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .sidebar .nav-link:hover { background: #e8f5e9; color: #00ff00; }
+        .sidebar .nav-link.active { background: #00ff00; color: black; }
+        
+        .stat-card { 
+            border-radius: 15px; 
+            padding: 15px; 
+            text-align: center; 
+            margin-bottom: 15px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            transition: transform 0.3s; 
+        }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-card i { font-size: 35px; color: #00ff00; }
+        .stat-number { font-size: 24px; font-weight: bold; }
+        .stat-card small { font-size: 10px; display: block; margin-top: 8px; color: #666; }
+        
+        .table-container { 
+            border-radius: 15px; 
+            padding: 15px; 
+            margin-top: 20px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+        }
+        
+        .status-pending { background: #ffc107; color: #000; padding: 4px 8px; border-radius: 20px; font-size: 11px; }
+        .status-approved { background: #28a745; color: white; padding: 4px 8px; border-radius: 20px; font-size: 11px; }
+        .status-rejected { background: #dc3545; color: white; padding: 4px 8px; border-radius: 20px; font-size: 11px; }
+        .status-delivered { background: #17a2b8; color: white; padding: 4px 8px; border-radius: 20px; font-size: 11px; }
+        
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        
+        .btn-approve { background: #28a745; color: white; border: none; padding: 4px 8px; border-radius: 5px; margin: 2px; font-size: 11px; }
+        .btn-reject { background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 5px; margin: 2px; font-size: 11px; }
+        
+        .chart-container { border-radius: 15px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        .chart-container h5 { margin-bottom: 20px; font-weight: 600; }
+        
+        .btn-export, .btn-download { 
+            background: #00ff00; 
+            color: black; 
+            border: none; 
+            padding: 5px 12px; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            font-size: 12px;
+            margin: 2px;
+        }
+        .btn-export:hover, .btn-download:hover { background: #00cc00; }
+        
+        .bulk-actions { 
+            border-radius: 8px; 
+            padding: 10px; 
+            margin-top: 15px; 
+            display: none; 
+            text-align: center;
+        }
+        
+        .toast-notification { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            background: #28a745; 
+            color: white; 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            z-index: 9999; 
+            animation: fadeInOut 3s ease; 
+            font-size: 13px;
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 12px;
+        }
+        
+        @keyframes fadeInOut { 
+            0% { opacity: 0; transform: translateX(100%); } 
+            15% { opacity: 1; transform: translateX(0); } 
+            85% { opacity: 1; } 
+            100% { opacity: 0; transform: translateX(100%); } 
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .filter-bar input, .filter-bar select {
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            font-size: 12px;
+        }
+        .refresh-btn {
+            background: #00ff00;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <nav class="navbar navbar-dark">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <button class="hamburger" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="/admin_dashboard">
+                    <i class="fas fa-motorcycle"></i> KAWASAKI ADMIN
+                </a>
+            </div>
+            <div class="d-flex align-items-center">
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i> <span id="themeText">Dark</span>
+                </button>
+                <a href="/home" class="btn btn-outline-light btn-sm me-1">View Site</a>
+                <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <div class="container-fluid mt-3">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="sidebar">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-crown fa-2x" style="color: #00ff00;"></i>
+                        <h5 class="mt-2">Admin Panel</h5>
+                    </div>
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" onclick="showSection('dashboard'); closeSidebar();"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        <a class="nav-link" onclick="showSection('testrides'); closeSidebar();"><i class="fas fa-road"></i> Test Rides</a>
+                        <a class="nav-link" onclick="showSection('bookings'); closeSidebar();"><i class="fas fa-calendar-check"></i> Bike Bookings</a>
+                        <a class="nav-link" onclick="showSection('orders'); closeSidebar();"><i class="fas fa-shopping-cart"></i> Parts Orders</a>
+                        <a class="nav-link" onclick="showSection('clothing'); closeSidebar();"><i class="fas fa-tshirt"></i> Clothing Orders</a>
+                        <a class="nav-link" onclick="showSection('products'); closeSidebar();"><i class="fas fa-boxes"></i> Products</a>
+                        <a class="nav-link" onclick="showSection('users'); closeSidebar();"><i class="fas fa-users"></i> Users</a>
+                    </nav>
+                </div>
+            </div>
+            
+            <div class="col-md-9">
+                <!-- Dashboard Section -->
+                <div id="dashboardSection" class="content-section active">
+                    <div class="row">
+                        <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-users"></i><div class="stat-number" id="totalUsers">0</div><p>Total Users</p></div></div>
+                        <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-road"></i><div class="stat-number" id="pendingTestRides">0</div><p>Pending Test Rides</p><small>✅ Approved: <span id="approvedTestRides">0</span> | ❌ Rejected: <span id="rejectedTestRides">0</span></small></div></div>
+                        <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-calendar-check"></i><div class="stat-number" id="pendingBookings">0</div><p>Pending Bookings</p><small>✅ Approved: <span id="approvedBookings">0</span> | ❌ Rejected: <span id="rejectedBookings">0</span></small></div></div>
+                        <div class="col-md-3 col-6"><div class="stat-card"><i class="fas fa-shopping-cart"></i><div class="stat-number" id="pendingOrders">0</div><p>Pending Orders</p><small>🔧 Parts: <span id="partsOrders">0</span> | 👕 Clothing: <span id="clothingOrders">0</span></small></div></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6"><div class="chart-container"><h5><i class="fas fa-chart-line"></i> Monthly Revenue</h5><canvas id="revenueChart"></canvas></div></div>
+                        <div class="col-md-6"><div class="chart-container"><h5><i class="fas fa-chart-pie"></i> Order Status Distribution</h5><canvas id="statusChart"></canvas></div></div>
+                    </div>
+                    <div class="table-container">
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap"><h5><i class="fas fa-clock"></i> Recent Orders</h5><button class="btn-export" onclick="exportOrders()"><i class="fas fa-download"></i> Export Report</button></div>
+                        <div class="table-responsive"><table class="table table-hover"><thead><tr><th>ID</th><th>Customer</th><th>Type</th><th>Product</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead><tbody id="recentOrdersTable"></tbody></table></div>
+                    </div>
+                    <div class="table-container"><h5><i class="fas fa-user-plus"></i> Recent Users</h5><div class="table-responsive"><table class="table table-hover"><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Registered</th></tr></thead><tbody id="recentUsersTable"></tbody></table></div></div>
+                </div>
+
+                <!-- Test Rides Section with Download -->
+                <div id="testridesSection" class="content-section">
+                    <div class="table-container">
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                            <h5><i class="fas fa-road"></i> Test Ride Requests</h5>
+                            <button class="btn-download" onclick="downloadTestRides()"><i class="fas fa-download"></i> Download Report</button>
+                        </div>
+                        <div class="table-responsive"><table class="table"><thead><tr><th>ID</th><th>User</th><th>Bike</th><th>Date</th><th>Time</th><th>Status</th><th>Actions</th></tr></thead><tbody id="testridesTable"></tbody></table></div>
+                    </div>
+                </div>
+
+                <!-- Bike Bookings Section with Download -->
+                <div id="bookingsSection" class="content-section">
+                    <div class="table-container">
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                            <h5><i class="fas fa-calendar-check"></i> Bike Bookings</h5>
+                            <button class="btn-download" onclick="downloadBookings()"><i class="fas fa-download"></i> Download Report</button>
+                        </div>
+                        <div class="table-responsive"><table class="table"><thead><tr><th>ID</th><th>User</th><th>Bike</th><th>Date</th><th>Down Payment</th><th>Status</th><th>Actions</th></tr></thead><tbody id="bookingsTable"></tbody></table></div>
+                    </div>
+                </div>
+
+                <!-- Parts Orders Section with Bulk Actions and Download -->
+                <div id="ordersSection" class="content-section">
+                    <div class="table-container">
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                            <h5><i class="fas fa-shopping-cart"></i> Parts Orders</h5>
+                            <button class="btn-download" onclick="downloadPartsOrders()"><i class="fas fa-download"></i> Download Report</button>
+                        </div>
+                        <div class="filter-bar">
+                            <input type="text" id="partsSearch" placeholder="Search by user or product..." onkeyup="filterPartsOrders()">
+                            <select id="partsStatusFilter" onchange="filterPartsOrders()">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                                <option value="delivered">Delivered</option>
+                            </select>
+                            <button class="refresh-btn" onclick="loadOrders()"><i class="fas fa-sync-alt"></i></button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="selectAllOrders" onchange="toggleAllOrders()"></th>
+                                        <th>ID</th><th>User</th><th>Product</th><th>Qty</th><th>Size/Color</th><th>Amount</th><th>Status</th><th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTable"></tbody>
+                            </table>
+                        </div>
+                        <div id="bulkActions" class="bulk-actions">
+                            <button class="btn btn-success btn-sm" onclick="bulkApprove()"><i class="fas fa-check"></i> Approve Selected</button>
+                            <button class="btn btn-danger btn-sm" onclick="bulkReject()"><i class="fas fa-times"></i> Reject Selected</button>
+                            <span id="selectedCount" class="ms-2">0 selected</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clothing Orders Section (NEW) -->
+                <div id="clothingSection" class="content-section">
+                    <div class="table-container">
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                            <h5><i class="fas fa-tshirt"></i> Clothing Orders</h5>
+                            <button class="btn-download" onclick="downloadClothingOrders()"><i class="fas fa-download"></i> Download Report</button>
+                        </div>
+                        <div class="filter-bar">
+                            <input type="text" id="clothingSearch" placeholder="Search by user or product..." onkeyup="filterClothingOrders()">
+                            <select id="clothingStatusFilter" onchange="filterClothingOrders()">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                                <option value="delivered">Delivered</option>
+                            </select>
+                            <button class="refresh-btn" onclick="loadClothingOrders()"><i class="fas fa-sync-alt"></i></button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="selectAllClothing" onchange="toggleAllClothing()"></th>
+                                        <th>ID</th><th>User</th><th>Product</th><th>Size</th><th>Qty</th><th>Price</th><th>Total</th><th>Status</th><th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="clothingTable"></tbody>
+                            </table>
+                        </div>
+                        <div id="clothingBulkActions" class="bulk-actions">
+                            <button class="btn btn-success btn-sm" onclick="bulkApproveClothing()"><i class="fas fa-check"></i> Approve Selected</button>
+                            <button class="btn btn-danger btn-sm" onclick="bulkRejectClothing()"><i class="fas fa-times"></i> Reject Selected</button>
+                            <span id="clothingSelectedCount" class="ms-2">0 selected</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Section -->
+                <div id="productsSection" class="content-section">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                        <h5><i class="fas fa-boxes"></i> Manage Products</h5>
+                        <button class="btn btn-success btn-sm" onclick="showAddProductModal()"><i class="fas fa-plus"></i> Add Product</button>
+                    </div>
+                    <div class="table-container"><div class="table-responsive"><table class="table table-hover"><thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead><tbody id="productsTable"></tbody></table></div></div>
+                </div>
+
+                <!-- Users Section with Download -->
+                <div id="usersSection" class="content-section">
+                    <div class="table-container">
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                            <h5><i class="fas fa-users"></i> Users</h5>
+                            <button class="btn-download" onclick="downloadUsers()"><i class="fas fa-download"></i> Download Users Report</button>
+                        </div>
+                        <div class="table-responsive"><table class="table"><thead><tr><th>ID</th><th>Username</th><th>Name</th><th>Email</th><th>Phone</th><th>Registered</th><th>Actions</th></tr></thead><tbody id="usersTable"></tbody></table></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header"><h5 id="productModalTitle">Add Product</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="editProductId">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-2"><label>Product Name</label><input type="text" id="productName" class="form-control" required></div>
+                            <div class="mb-2"><label>Category</label><select id="productCategory" class="form-control"><option value="bike">🏍️ Bike</option><option value="scooter">🛴 Scooter</option><option value="part">🔧 Part</option><option value="clothing">👕 Clothing</option></select></div>
+                            <div class="row"><div class="col-md-6"><label>Price (₹)</label><input type="number" id="productPrice" class="form-control"></div><div class="col-md-6"><label>Old Price (₹)</label><input type="number" id="productOldPrice" class="form-control"></div></div>
+                            <div class="row mt-2"><div class="col-md-6"><label>Stock</label><input type="number" id="productStock" class="form-control" value="0"></div><div class="col-md-6"><div class="form-check mt-2"><input type="checkbox" id="productFeatured" class="form-check-input"><label class="form-check-label">Featured Product</label></div></div></div>
+                        </div>
+                        <div class="col-md-6"><div class="mb-2"><label>Image URL</label><input type="text" id="productImage" class="form-control" placeholder="https://... or /static/uploads/..."></div></div>
+                    </div>
+                    <div id="bikeSpecSection" style="display: none;">
+                        <hr><h6><i class="fas fa-motorcycle"></i> Bike Specifications</h6>
+                        <div class="row">
+                            <div class="col-md-3"><label>Engine (CC)</label><input type="number" id="productCc" class="form-control"></div>
+                            <div class="col-md-3"><label>Top Speed (km/h)</label><input type="number" id="productTopSpeed" class="form-control"></div>
+                            <div class="col-md-3"><label>Mileage (km/l)</label><input type="number" step="0.1" id="productMileage" class="form-control"></div>
+                            <div class="col-md-3"><label>Power (PS)</label><input type="text" id="productPower" class="form-control"></div>
+                        </div>
+                        <div class="mb-2 mt-2"><label>Features</label><textarea id="productFeatures" class="form-control" rows="2"></textarea></div>
+                    </div>
+                    <div class="mb-2 mt-2"><label>Description</label><textarea id="productDescription" class="form-control" rows="2"></textarea></div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveProduct()">Save Product</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remarks Modal -->
+    <div class="modal fade" id="remarksModal" tabindex="-1">
+        <div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5>Add Remarks</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea id="remarksText" class="form-control" rows="3" placeholder="Enter remarks..."></textarea><input type="hidden" id="actionType"><input type="hidden" id="actionId"></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="submitRemarks()">Submit</button></div></div></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentAction = { type: '', id: '', status: '' };
+        let revenueChart, statusChart;
+        let clothingData = [];
+
+        // Theme Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const themeText = document.getElementById('themeText');
+            if (body.classList.contains('light-mode')) {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+                themeText.innerHTML = 'Light';
+                localStorage.setItem('adminTheme', 'dark');
+            } else {
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+                themeText.innerHTML = 'Dark';
+                localStorage.setItem('adminTheme', 'light');
+            }
+        }
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('adminTheme');
+        if (savedTheme === 'dark') {
+            document.body.classList.remove('light-mode');
+            document.body.classList.add('dark-mode');
+            document.getElementById('themeText').innerHTML = 'Light';
+        }
+
+        // Mobile Sidebar Functions
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+            document.querySelector('.sidebar-overlay').classList.toggle('active');
+        }
+        function closeSidebar() {
+            document.querySelector('.sidebar').classList.remove('open');
+            document.querySelector('.sidebar-overlay').classList.remove('active');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.style.background = type === 'success' ? '#28a745' : '#dc3545';
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function showSection(section) {
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sidebar .nav-link').forEach(el => el.classList.remove('active'));
+            document.getElementById(section + 'Section').classList.add('active');
+            event.target.classList.add('active');
+            if (section === 'testrides') loadTestRides();
+            else if (section === 'bookings') loadBookings();
+            else if (section === 'orders') loadOrders();
+            else if (section === 'clothing') loadClothingOrders();
+            else if (section === 'products') loadProducts();
+            else if (section === 'users') loadUsers();
+            else loadStats();
+            closeSidebar();
+        }
+
+        function loadStats() {
+            fetch('/admin/stats').then(r => r.json()).then(data => {
+                document.getElementById('pendingTestRides').innerText = data.pending_testrides || 0;
+                document.getElementById('pendingBookings').innerText = data.pending_bookings || 0;
+                document.getElementById('pendingOrders').innerText = data.pending_orders || 0;
+                document.getElementById('totalUsers').innerText = data.total_users || 0;
+                document.getElementById('approvedTestRides').innerText = data.approved_testrides || 0;
+                document.getElementById('rejectedTestRides').innerText = data.rejected_testrides || 0;
+                document.getElementById('approvedBookings').innerText = data.approved_bookings || 0;
+                document.getElementById('rejectedBookings').innerText = data.rejected_bookings || 0;
+                document.getElementById('partsOrders').innerText = data.total_parts_orders || 0;
+                document.getElementById('clothingOrders').innerText = data.total_clothing_orders || 0;
+            }).catch(() => showToast('Error loading stats', 'error'));
+            
+            fetch('/admin/recent_orders').then(r => r.json()).then(data => {
+                let html = '';
+                data.forEach(order => {
+                    let statusClass = order.status === 'pending' ? 'badge bg-warning' : (order.status === 'approved' ? 'badge bg-success' : 'badge bg-danger');
+                    html += `<tr><td>#${order.id}</td><td>${order.customer}</td><td>${order.type}</td><td>${order.product}</td><td>₹${order.amount.toLocaleString()}</td><td>${order.date}</td><td><span class="${statusClass}">${order.status}</span></td></tr>`;
+                });
+                document.getElementById('recentOrdersTable').innerHTML = html || '<tr><td colspan="7" class="text-center">No recent orders</td></tr>';
+            });
+            
+            fetch('/admin/recent_users').then(r => r.json()).then(data => {
+                let html = '';
+                data.forEach(user => {
+                    html += `<td><td>${user.id}</td><td>${user.name}</td><td>${user.email}</td><td>${user.phone}</td><td>${user.date}</td></tr>`;
+                });
+                document.getElementById('recentUsersTable').innerHTML = html || '<tr><td colspan="5" class="text-center">No recent users</td></tr>';
+            });
+            loadCharts();
+        }
+
+        function loadCharts() {
+            fetch('/admin/chart_data').then(r => r.json()).then(data => {
+                if (revenueChart) revenueChart.destroy();
+                if (statusChart) statusChart.destroy();
+                revenueChart = new Chart(document.getElementById('revenueChart'), { type: 'line', data: { labels: data.months, datasets: [{ label: 'Revenue (₹)', data: data.revenue, borderColor: '#00ff00', backgroundColor: 'rgba(0,255,0,0.1)', fill: true, tension: 0.3 }] }, options: { responsive: true } });
+                statusChart = new Chart(document.getElementById('statusChart'), { type: 'doughnut', data: { labels: ['Pending', 'Approved', 'Rejected'], datasets: [{ data: [data.pending, data.approved, data.rejected], backgroundColor: ['#ffc107', '#28a745', '#dc3545'] }] }, options: { responsive: true } });
+            });
+        }
+
+        function exportOrders() { window.location.href = '/admin/export_orders'; }
+        
+        // Download functions
+        function downloadTestRides() { window.location.href = '/admin/download_testrides'; }
+        function downloadBookings() { window.location.href = '/admin/download_bookings'; }
+        function downloadPartsOrders() { window.location.href = '/admin/download_parts_orders'; }
+        function downloadClothingOrders() { window.location.href = '/admin/download_clothing_orders'; }
+        function downloadUsers() { window.location.href = '/admin/download_users'; }
+
+        function loadTestRides() {
+            fetch('/admin/testrides').then(r => r.json()).then(data => {
+                let html = '';
+                data.forEach(r => {
+                    let statusClass = r.status === 'pending' ? 'status-pending' : (r.status === 'approved' ? 'status-approved' : 'status-rejected');
+                    html += `<tr><td>${r.id}</td><td>${r.username}</td><td>${r.bike_name}</td><td>${r.test_date}</td><td>${r.test_time}</td><td><span class="${statusClass}">${r.status}</span></td><td>${r.status === 'pending' ? `<button class="btn-approve" onclick="showRemarksModal('testride', ${r.id}, 'approved')">Approve</button><button class="btn-reject" onclick="showRemarksModal('testride', ${r.id}, 'rejected')">Reject</button>` : ''}${r.admin_remarks ? `<br><small>Remarks: ${r.admin_remarks}</small>` : ''}</td></tr>`;
+                });
+                document.getElementById('testridesTable').innerHTML = html;
+            });
+        }
+
+        function loadBookings() {
+            fetch('/admin/bookings').then(r => r.json()).then(data => {
+                let html = '';
+                data.forEach(b => {
+                    let statusClass = b.status === 'pending' ? 'status-pending' : (b.status === 'approved' ? 'status-approved' : 'status-rejected');
+                    html += `<tr><td>${b.id}</td><td>${b.username}</td><td>${b.bike_name}</td><td>${b.booking_date}</td><td>₹${b.down_payment.toLocaleString()}</td><td><span class="${statusClass}">${b.status}</span></td><td>${b.status === 'pending' ? `<button class="btn-approve" onclick="showRemarksModal('booking', ${b.id}, 'approved')">Approve</button><button class="btn-reject" onclick="showRemarksModal('booking', ${b.id}, 'rejected')">Reject</button>` : ''}${b.admin_remarks ? `<br><small>Remarks: ${b.admin_remarks}</small>` : ''}</td></tr>`;
+                });
+                document.getElementById('bookingsTable').innerHTML = html;
+            });
+        }
+
+        // Parts Orders Functions
+        function loadOrders() {
+            fetch('/admin/orders').then(r => r.json()).then(data => {
+                window.ordersData = data;
+                renderOrdersTable(data);
+            });
+        }
+
+        function renderOrdersTable(data) {
+            let html = '';
+            data.forEach(o => {
+                let statusClass = o.status === 'pending' ? 'status-pending' : (o.status === 'approved' ? 'status-approved' : (o.status === 'delivered' ? 'status-delivered' : 'status-rejected'));
+                let checkboxHtml = o.status === 'pending' ? `<input type="checkbox" class="orderCheckbox" value="${o.id}" onchange="updateSelectedCount()">` : '';
+                html += `<tr>
+                    <td>${checkboxHtml}</td>
+                    <td>${o.id}</td>
+                    <td>${o.username}</td>
+                    <td>${o.product_name}</td>
+                    <td>${o.quantity}</td>
+                    <td>${o.size}/${o.color}</td>
+                    <td>₹${o.price.toLocaleString()}</td>
+                    <td><span class="${statusClass}">${o.status}</span></td>
+                    <td>${o.status === 'pending' ? `<button class="btn-approve" onclick="showRemarksModal('order', ${o.id}, 'approved')">Approve</button><button class="btn-reject" onclick="showRemarksModal('order', ${o.id}, 'rejected')">Reject</button>` : (o.status === 'approved' ? `<button class="btn-approve" onclick="updateOrderStatus(${o.id}, 'delivered')">Delivered</button>` : '')}${o.admin_remarks ? `<br><small>Remarks: ${o.admin_remarks}</small>` : ''}
+                    </td>
+                <tr>`;
+            });
+            document.getElementById('ordersTable').innerHTML = html;
+            updateSelectedCount();
+        }
+
+        function filterPartsOrders() {
+            const searchTerm = document.getElementById('partsSearch').value.toLowerCase();
+            const statusFilter = document.getElementById('partsStatusFilter').value;
+            let filtered = window.ordersData || [];
+            if (searchTerm) {
+                filtered = filtered.filter(o => o.username.toLowerCase().includes(searchTerm) || o.product_name.toLowerCase().includes(searchTerm));
+            }
+            if (statusFilter !== 'all') {
+                filtered = filtered.filter(o => o.status === statusFilter);
+            }
+            renderOrdersTable(filtered);
+        }
+
+        function toggleAllOrders() {
+            const selectAll = document.getElementById('selectAllOrders');
+            if (!selectAll) return;
+            const checkboxes = document.querySelectorAll('.orderCheckbox');
+            checkboxes.forEach(cb => cb.checked = selectAll.checked);
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const selected = document.querySelectorAll('.orderCheckbox:checked').length;
+            const bulkDiv = document.getElementById('bulkActions');
+            const countSpan = document.getElementById('selectedCount');
+            if (selected > 0) { if (bulkDiv) bulkDiv.style.display = 'block'; if (countSpan) countSpan.innerText = selected + ' selected'; }
+            else { if (bulkDiv) bulkDiv.style.display = 'none'; }
+        }
+
+        function bulkApprove() {
+            const selected = []; document.querySelectorAll('.orderCheckbox:checked').forEach(cb => selected.push(cb.value));
+            if (selected.length === 0) { showToast('No orders selected', 'error'); return; }
+            if (confirm('Approve ' + selected.length + ' orders?')) {
+                fetch('/admin/bulk_update_status', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids: selected, status: 'approved', type: 'parts' }) })
+                .then(r => r.json()).then(data => { if (data.success) { showToast(data.count + ' orders approved!'); loadOrders(); loadStats(); document.getElementById('selectAllOrders').checked = false; } });
+            }
+        }
+
+        function bulkReject() {
+            const selected = []; document.querySelectorAll('.orderCheckbox:checked').forEach(cb => selected.push(cb.value));
+            if (selected.length === 0) { showToast('No orders selected', 'error'); return; }
+            if (confirm('Reject ' + selected.length + ' orders?')) {
+                fetch('/admin/bulk_update_status', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids: selected, status: 'rejected', type: 'parts' }) })
+                .then(r => r.json()).then(data => { if (data.success) { showToast(data.count + ' orders rejected!'); loadOrders(); loadStats(); document.getElementById('selectAllOrders').checked = false; } });
+            }
+        }
+
+       // Clothing Orders Functions
+function loadClothingOrders() {
+    fetch('/admin/clothing_orders')
+        .then(r => r.json())
+        .then(data => {
+            window.clothingData = data;
+            renderClothingTable(data);
+        })
+        .catch(error => console.error('Error loading clothing orders:', error));
+}
+
+function renderClothingTable(data) {
+    let html = '';
+    data.forEach(o => {
+        let statusClass = o.status === 'pending' ? 'status-pending' : (o.status === 'approved' ? 'status-approved' : (o.status === 'delivered' ? 'status-delivered' : 'status-rejected'));
+        let checkboxHtml = o.status === 'pending' ? `<input type="checkbox" class="clothingCheckbox" value="${o.id}" onchange="updateClothingSelectedCount()">` : '';
+        let actionButtons = '';
+        if (o.status === 'pending') {
+            actionButtons = `<button class="btn-approve" onclick="showRemarksModal('clothing', ${o.id}, 'approved')">Approve</button>
+                             <button class="btn-reject" onclick="showRemarksModal('clothing', ${o.id}, 'rejected')">Reject</button>`;
+        } else if (o.status === 'approved') {
+            actionButtons = `<button class="btn-approve" onclick="updateClothingStatus(${o.id}, 'delivered')">Delivered</button>`;
+        }
+        
+        html += `<tr>
+            <td>${checkboxHtml}</td>
+            <td>${o.id}</td>
+            <td>${o.username}</td>
+            <td>${o.product_name}</td>
+            <td>${o.size}</td>
+            <td>${o.quantity}</td>
+            <td>₹${o.price.toLocaleString()}</td>
+            <td>₹${o.total.toLocaleString()}</td>
+            <td><span class="${statusClass}">${o.status}</span></td>
+            <td>${actionButtons}${o.admin_remarks ? `<br><small>Remarks: ${o.admin_remarks}</small>` : ''}
+        </tr>`;
+    });
+    document.getElementById('clothingTable').innerHTML = html;
+    updateClothingSelectedCount();
+}
+
+function filterClothingOrders() {
+    const searchTerm = document.getElementById('clothingSearch').value.toLowerCase();
+    const statusFilter = document.getElementById('clothingStatusFilter').value;
+    let filtered = window.clothingData || [];
+    if (searchTerm) {
+        filtered = filtered.filter(o => o.username.toLowerCase().includes(searchTerm) || o.product_name.toLowerCase().includes(searchTerm));
+    }
+    if (statusFilter !== 'all') {
+        filtered = filtered.filter(o => o.status === statusFilter);
+    }
+    renderClothingTable(filtered);
+}
+
+function toggleAllClothing() {
+    const selectAll = document.getElementById('selectAllClothing');
+    if (!selectAll) return;
+    const checkboxes = document.querySelectorAll('.clothingCheckbox');
+    checkboxes.forEach(cb => cb.checked = selectAll.checked);
+    updateClothingSelectedCount();
+}
+
+function updateClothingSelectedCount() {
+    const selected = document.querySelectorAll('.clothingCheckbox:checked').length;
+    const bulkDiv = document.getElementById('clothingBulkActions');
+    const countSpan = document.getElementById('clothingSelectedCount');
+    if (selected > 0) {
+        if (bulkDiv) bulkDiv.style.display = 'block';
+        if (countSpan) countSpan.innerText = selected + ' selected';
+    } else {
+        if (bulkDiv) bulkDiv.style.display = 'none';
+    }
+}
+
+function bulkApproveClothing() {
+    const selected = [];
+    document.querySelectorAll('.clothingCheckbox:checked').forEach(cb => selected.push(cb.value));
+    if (selected.length === 0) {
+        showToast('No orders selected', 'error');
+        return;
+    }
+    if (confirm('Approve ' + selected.length + ' clothing orders?')) {
+        fetch('/admin/bulk_update_clothing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: selected, status: 'approved' })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.count + ' clothing orders approved!');
+                loadClothingOrders();
+                loadStats();
+                document.getElementById('selectAllClothing').checked = false;
+            }
+        });
+    }
+}
+
+function bulkRejectClothing() {
+    const selected = [];
+    document.querySelectorAll('.clothingCheckbox:checked').forEach(cb => selected.push(cb.value));
+    if (selected.length === 0) {
+        showToast('No orders selected', 'error');
+        return;
+    }
+    if (confirm('Reject ' + selected.length + ' clothing orders?')) {
+        fetch('/admin/bulk_update_clothing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: selected, status: 'rejected' })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.count + ' clothing orders rejected!');
+                loadClothingOrders();
+                loadStats();
+                document.getElementById('selectAllClothing').checked = false;
+            }
+        });
+    }
+}
+
+function updateClothingStatus(id, status) {
+    fetch('/admin/update_status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'clothing', id: id, status: status, remarks: '' })
+    }).then(() => loadClothingOrders());
+}
+
+function downloadClothingOrders() {
+    window.location.href = '/admin/download_clothing_orders';
+}
+
+        // Products Functions
+        function loadProducts() {
+            fetch('/admin/products').then(r => r.json()).then(data => {
+                let html = '';
+                data.forEach(p => { html += `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.category}</td><td>₹${p.price.toLocaleString()}</td><td>${p.stock}</td><td><button class="btn btn-sm btn-warning" onclick="editProduct(${p.id})">Edit</button><button class="btn btn-sm btn-danger" onclick="deleteProduct(${p.id})">Delete</button></td></tr>`; });
+                document.getElementById('productsTable').innerHTML = html || '<tr><td colspan="6" class="text-center">No products found</td></tr>';
+            });
+        }
+
+        function showAddProductModal() {
+            document.getElementById('productModalTitle').innerText = 'Add Product';
+            document.getElementById('editProductId').value = '';
+            document.getElementById('productName').value = '';
+            document.getElementById('productCategory').value = 'bike';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productOldPrice').value = '';
+            document.getElementById('productStock').value = '0';
+            document.getElementById('productImage').value = '';
+            document.getElementById('productDescription').value = '';
+            document.getElementById('productFeatured').checked = false;
+            document.getElementById('productCc').value = '';
+            document.getElementById('productTopSpeed').value = '';
+            document.getElementById('productMileage').value = '';
+            document.getElementById('productPower').value = '';
+            document.getElementById('productFeatures').value = '';
+            toggleBikeSpecs();
+            new bootstrap.Modal(document.getElementById('productModal')).show();
+        }
+
+        function editProduct(id) {
+            fetch('/admin/products').then(r => r.json()).then(products => {
+                const p = products.find(p => p.id === id);
+                if (p) {
+                    document.getElementById('productModalTitle').innerText = 'Edit Product';
+                    document.getElementById('editProductId').value = p.id;
+                    document.getElementById('productName').value = p.name;
+                    document.getElementById('productCategory').value = p.category;
+                    document.getElementById('productPrice').value = p.price;
+                    document.getElementById('productOldPrice').value = p.old_price || '';
+                    document.getElementById('productStock').value = p.stock;
+                    document.getElementById('productImage').value = p.image || '';
+                    document.getElementById('productDescription').value = p.description || '';
+                    document.getElementById('productFeatured').checked = p.featured;
+                    document.getElementById('productCc').value = p.cc || '';
+                    document.getElementById('productTopSpeed').value = p.top_speed || '';
+                    document.getElementById('productMileage').value = p.mileage || '';
+                    document.getElementById('productPower').value = p.power || '';
+                    document.getElementById('productFeatures').value = p.features || '';
+                    toggleBikeSpecs();
+                    new bootstrap.Modal(document.getElementById('productModal')).show();
+                }
+            });
+        }
+
+        function toggleBikeSpecs() {
+            const category = document.getElementById('productCategory').value;
+            const bikeSpecs = document.getElementById('bikeSpecSection');
+            bikeSpecs.style.display = (category === 'bike' || category === 'scooter') ? 'block' : 'none';
+        }
+        document.getElementById('productCategory')?.addEventListener('change', toggleBikeSpecs);
+
+        function saveProduct() {
+            const id = document.getElementById('editProductId').value;
+            const data = { name: document.getElementById('productName').value, category: document.getElementById('productCategory').value, price: parseInt(document.getElementById('productPrice').value) || 0, old_price: parseInt(document.getElementById('productOldPrice').value) || null, stock: parseInt(document.getElementById('productStock').value) || 0, image: document.getElementById('productImage').value, description: document.getElementById('productDescription').value, featured: document.getElementById('productFeatured').checked, cc: parseInt(document.getElementById('productCc').value) || 0, top_speed: parseInt(document.getElementById('productTopSpeed').value) || 0, mileage: parseFloat(document.getElementById('productMileage').value) || 0, power: document.getElementById('productPower').value || '', features: document.getElementById('productFeatures').value || '' };
+            if (!data.name) { alert('Please enter product name'); return; }
+            const url = id ? `/admin/product/edit/${id}` : '/admin/product/add';
+            const method = id ? 'PUT' : 'POST';
+            const btn = event.target, original = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...'; btn.disabled = true;
+            fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+            .then(r => r.json()).then(data => { btn.innerHTML = original; btn.disabled = false;
+                if (data.success) { bootstrap.Modal.getInstance(document.getElementById('productModal')).hide(); loadProducts(); showToast('Product saved successfully!'); }
+                else { alert('Error saving product'); }
+            }).catch(() => { btn.innerHTML = original; btn.disabled = false; alert('Error saving product'); });
+        }
+
+        function deleteProduct(id) { if (confirm('Delete this product?')) { fetch(`/admin/product/delete/${id}`, { method: 'DELETE' }).then(() => { loadProducts(); showToast('Product deleted'); }); } }
+
+        function loadUsers() {
+            fetch('/admin/users').then(r => r.json()).then(data => {
+                let html = '';
+                data.forEach(u => { html += `<tr><td>${u.id}</td><td>${u.username}</td><td>${u.full_name}</td><td>${u.email}</td><td>${u.phone}</td><td>${u.created_at || '-'}</td><td><button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id})">Delete</button></td></tr>`; });
+                document.getElementById('usersTable').innerHTML = html;
+            });
+        }
+
+        function showRemarksModal(type, id, status) { document.getElementById('remarksText').value = ''; currentAction = { type, id, status }; new bootstrap.Modal(document.getElementById('remarksModal')).show(); }
+
+        function submitRemarks() {
+            const remarks = document.getElementById('remarksText').value;
+            fetch('/admin/update_status', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: currentAction.type, id: currentAction.id, status: currentAction.status, remarks: remarks }) })
+            .then(r => r.json()).then(data => {
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('remarksModal')).hide();
+                    showToast('Status updated successfully!');
+                    const currentSection = document.querySelector('.content-section.active').id.replace('Section', '');
+                    if (currentSection === 'testrides') { loadTestRides(); loadStats(); }
+                    else if (currentSection === 'bookings') { loadBookings(); loadStats(); }
+                    else if (currentSection === 'orders') { loadOrders(); loadStats(); }
+                    else if (currentSection === 'clothing') { loadClothingOrders(); loadStats(); }
+                    else if (currentSection === 'users') { loadUsers(); }
+                    else { loadStats(); }
+                } else { alert('Error updating status'); }
+            });
+        }
+
+        function updateOrderStatus(id, status) { fetch('/admin/update_status', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'order', id: id, status: status, remarks: '' }) }).then(() => loadOrders()); }
+
+        function deleteUser(id) { if (confirm('Delete this user?')) { fetch(`/admin/user/${id}`, { method: 'DELETE' }).then(() => loadUsers()); } }
+
+        // Initialize
+        loadStats();
+        loadOrders();
+        loadClothingOrders();
+    </script>
+</body>
+</html>

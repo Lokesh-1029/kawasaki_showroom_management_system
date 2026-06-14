@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Booking - Kawasaki</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .navbar {
+            background: black;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar-brand {
+            color: #00ff00 !important;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 50px 0;
+            text-align: center;
+        }
+        .hero-section h1 {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #00ff00;
+            display: inline-block;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .form-group label i {
+            color: #00ff00;
+            margin-right: 8px;
+        }
+        .form-group select, .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+        .form-group select:focus, .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #00ff00;
+            box-shadow: 0 0 0 3px rgba(0,255,0,0.1);
+        }
+
+        .service-type-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 15px;
+            height: 100%;
+        }
+        .service-type-card:hover {
+            border-color: #00ff00;
+            transform: translateY(-3px);
+        }
+        .service-type-card.selected {
+            border-color: #00ff00;
+            background: #e8f5e9;
+        }
+        .service-type-card i {
+            font-size: 35px;
+            color: #00ff00;
+            margin-bottom: 10px;
+        }
+        .service-type-card h5 {
+            margin-bottom: 5px;
+            font-size: 0.95rem;
+        }
+        .service-type-card .price {
+            color: #00ff00;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .time-slot {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 4px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 13px;
+        }
+        .time-slot:hover {
+            border-color: #00ff00;
+            background: #e8f5e9;
+        }
+        .time-slot.selected {
+            background: #00ff00;
+            color: black;
+            border-color: #009900;
+        }
+
+        .btn-submit {
+            background: #00ff00;
+            color: black;
+            border: none;
+            padding: 14px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            width: 100%;
+            transition: 0.3s;
+        }
+        .btn-submit:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(0,255,0,0.3);
+        }
+
+        .summary-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            position: sticky;
+            top: 20px;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .summary-total {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #00ff00;
+        }
+
+        /* Payment Modal */
+        .payment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .payment-modal.active {
+            display: flex;
+        }
+        .payment-content {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .payment-header {
+            text-align: center;
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .payment-detail {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .payment-method:hover {
+            border-color: #00ff00;
+        }
+        .payment-method.selected {
+            border-color: #00ff00;
+            background: #e8f5e9;
+        }
+        .payment-method i {
+            font-size: 28px;
+            margin-right: 15px;
+        }
+        .btn-pay {
+            background: #00ff00;
+            color: black;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* Notification Toast */
+        .notification-toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            border-radius: 12px;
+            padding: 0;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            z-index: 3000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 350px;
+        }
+        .notification-toast.show {
+            transform: translateX(0);
+        }
+        .notification-header {
+            background: #00ff00;
+            color: black;
+            padding: 12px 15px;
+            border-radius: 12px 12px 0 0;
+            font-weight: bold;
+        }
+        .notification-body {
+            padding: 15px;
+        }
+        .notification-body p {
+            margin-bottom: 8px;
+        }
+        .close-toast {
+            float: right;
+            cursor: pointer;
+        }
+
+        .footer {
+            background: #1a1a1a;
+            color: #888;
+            padding: 40px 0 20px;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 { font-size: 1.5rem; }
+            .payment-content { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/dashboard">
+            <i class="fas fa-motorcycle"></i> Kawasaki Showroom
+        </a>
+        <div>
+            <a href="/home" class="btn btn-outline-light me-2">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="/dashboard" class="btn btn-outline-light me-2">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="/logout" class="btn btn-outline-danger">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+</nav>
+
+    <section class="hero-section">
+        <div class="container">
+            <h1><i class="fas fa-tools"></i> Service Booking</h1>
+            <p>Schedule your Kawasaki service appointment online</p>
+        </div>
+    </section>
+
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="service-card">
+                    <h3 class="section-title">Select Your Bike</h3>
+                    <div class="form-group">
+                        <label><i class="fas fa-motorcycle"></i> Bike Model</label>
+                        <select id="bikeModel" class="form-control" onchange="updateServicePrices()">
+                            <option value="">-- Select your Kawasaki model --</option>
+                            <option value="Ninja 300">Ninja 300</option>
+                            <option value="Ninja 400">Ninja 400</option>
+                            <option value="Ninja 650">Ninja 650</option>
+                            <option value="Z900">Z900</option>
+                            <option value="Versys 650">Versys 650</option>
+                            <option value="Vulcan 900">Vulcan 900</option>
+                            <option value="Ninja H2">Ninja H2</option>
+                            <option value="KLX230">KLX230</option>
+                        </select>
+                    </div>
+
+                    <h3 class="section-title mt-3">Select Service Type</h3>
+                    <div class="row" id="serviceTypes">
+                        <div class="col-6 col-md-4">
+                            <div class="service-type-card" onclick="selectService(this, 'General Service', 'general')">
+                                <i class="fas fa-oil-can"></i>
+                                <h5>General Service</h5>
+                                <small>Oil & filter check</small>
+                                <div class="price" id="price-general">₹2,500</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <div class="service-type-card" onclick="selectService(this, 'Full Service', 'full')">
+                                <i class="fas fa-tools"></i>
+                                <h5>Full Service</h5>
+                                <small>Complete inspection</small>
+                                <div class="price" id="price-full">₹5,500</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <div class="service-type-card" onclick="selectService(this, 'Brake Service', 'brake')">
+                                <i class="fas fa-car-side"></i>
+                                <h5>Brake Service</h5>
+                                <small>Pad & fluid check</small>
+                                <div class="price" id="price-brake">₹1,800</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <div class="service-type-card" onclick="selectService(this, 'Engine Tuning', 'engine')">
+                                <i class="fas fa-engine"></i>
+                                <h5>Engine Tuning</h5>
+                                <small>Performance optimize</small>
+                                <div class="price" id="price-engine">₹3,500</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <div class="service-type-card" onclick="selectService(this, 'Tyre Service', 'tyre')">
+                                <i class="fas fa-circle-notch"></i>
+                                <h5>Tyre Service</h5>
+                                <small>Alignment & balancing</small>
+                                <div class="price" id="price-tyre">₹1,200</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <div class="service-type-card" onclick="selectService(this, 'Electrical Check', 'electrical')">
+                                <i class="fas fa-bolt"></i>
+                                <h5>Electrical Check</h5>
+                                <small>Battery & lights</small>
+                                <div class="price" id="price-electrical">₹1,500</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="section-title mt-3">Problem Description</h3>
+                    <div class="form-group">
+                        <textarea id="problemDesc" rows="2" class="form-control" placeholder="Describe any issues you're facing with your bike..."></textarea>
+                    </div>
+
+                    <h3 class="section-title mt-3">Schedule Date & Time</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar-alt"></i> Select Date</label>
+                                <input type="date" id="serviceDate" class="form-control" min="" onchange="loadTimeSlots()">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label><i class="fas fa-clock"></i> Select Time Slot</label>
+                                <div id="timeSlots" class="mt-2">
+                                    <div class="text-muted small">Please select a date first</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-comment"></i> Additional Notes</label>
+                        <textarea id="additionalNotes" rows="2" class="form-control" placeholder="Any special requests..."></textarea>
+                    </div>
+
+                    <button class="btn-submit mt-3" onclick="proceedToPayment()">
+                        <i class="fas fa-credit-card"></i> Proceed to Payment
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="summary-card">
+                    <h5><i class="fas fa-receipt"></i> Booking Summary</h5>
+                    <div class="summary-item">
+                        <span>Bike Model:</span>
+                        <span id="summaryBike" class="text-muted">Not selected</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Service Type:</span>
+                        <span id="summaryService" class="text-muted">Not selected</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Service Cost:</span>
+                        <span id="summaryCost" class="text-muted">₹0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>GST (18%):</span>
+                        <span id="summaryGST" class="text-muted">₹0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Date:</span>
+                        <span id="summaryDate" class="text-muted">Not selected</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Time:</span>
+                        <span id="summaryTime" class="text-muted">Not selected</span>
+                    </div>
+                    <div class="summary-item summary-total">
+                        <span>Total Amount:</span>
+                        <span id="summaryTotal">₹0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="payment-modal">
+        <div class="payment-content">
+            <div class="payment-header">
+                <i class="fas fa-credit-card" style="font-size: 48px; color: #00ff00;"></i>
+                <h4 class="mt-2">Secure Payment</h4>
+            </div>
+            <div id="paymentDetails"></div>
+            <h5>Select Payment Method</h5>
+            
+            <!-- Credit/Debit Card -->
+            <div class="payment-method" onclick="selectPaymentMethod(this, 'card')">
+                <i class="fas fa-credit-card"></i>
+                <div>
+                    <strong>💳 Credit/Debit Card</strong>
+                    <div><small>Visa, MasterCard, RuPay, Amex</small></div>
+                </div>
+            </div>
+            
+            <!-- UPI -->
+            <div class="payment-method" onclick="selectPaymentMethod(this, 'upi')">
+                <i class="fas fa-mobile-alt"></i>
+                <div>
+                    <strong>📱 UPI / QR Code</strong>
+                    <div><small>Google Pay, PhonePe, Paytm, Amazon Pay</small></div>
+                </div>
+            </div>
+            
+            <!-- Net Banking -->
+            <div class="payment-method" onclick="selectPaymentMethod(this, 'netbanking')">
+                <i class="fas fa-university"></i>
+                <div>
+                    <strong>🏦 Net Banking</strong>
+                    <div><small>SBI, HDFC, ICICI, Axis, Yes Bank & more</small></div>
+                </div>
+            </div>
+            
+            <!-- Wallet -->
+            <div class="payment-method" onclick="selectPaymentMethod(this, 'wallet')">
+                <i class="fas fa-wallet"></i>
+                <div>
+                    <strong>👛 Mobile Wallet</strong>
+                    <div><small>Paytm Wallet, Amazon Pay, Mobikwik</small></div>
+                </div>
+            </div>
+            
+            <!-- Cash on Service -->
+            <div class="payment-method" onclick="selectPaymentMethod(this, 'cod')">
+                <i class="fas fa-money-bill-wave"></i>
+                <div>
+                    <strong>💰 Cash on Service</strong>
+                    <div><small>Pay at the service center</small></div>
+                </div>
+            </div>
+            
+            <!-- EMI -->
+            <div class="payment-method" onclick="selectPaymentMethod(this, 'emi')">
+                <i class="fas fa-chart-line"></i>
+                <div>
+                    <strong>📊 No Cost EMI</strong>
+                    <div><small>3/6/9 months EMI options available</small></div>
+                </div>
+            </div>
+            
+            <button class="btn-pay" onclick="completePayment()">
+                <i class="fas fa-check-circle"></i> Pay Now
+            </button>
+            <button class="btn btn-secondary w-100 mt-2" onclick="closePaymentModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notificationToast" class="notification-toast">
+        <div class="notification-header">
+            <i class="fas fa-check-circle"></i> Booking Confirmed!
+            <span class="close-toast" onclick="closeNotification()">&times;</span>
+        </div>
+        <div class="notification-body" id="notificationBody">
+            <!-- Dynamic content will go here -->
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Kawasaki Motors India. Let the Good Times Roll.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Bike-specific service prices
+        const bikePrices = {
+            'Ninja 300': { general: 2500, full: 5500, brake: 1800, engine: 3500, tyre: 1200, electrical: 1500 },
+            'Ninja 400': { general: 2800, full: 6000, brake: 2000, engine: 3800, tyre: 1400, electrical: 1700 },
+            'Ninja 650': { general: 3500, full: 7500, brake: 2500, engine: 4500, tyre: 1800, electrical: 2000 },
+            'Z900': { general: 4000, full: 8500, brake: 2800, engine: 5000, tyre: 2000, electrical: 2200 },
+            'Versys 650': { general: 3800, full: 8000, brake: 2600, engine: 4800, tyre: 1900, electrical: 2100 },
+            'Vulcan 900': { general: 4200, full: 8800, brake: 3000, engine: 5200, tyre: 2200, electrical: 2400 },
+            'Ninja H2': { general: 8000, full: 15000, brake: 5000, engine: 10000, tyre: 3500, electrical: 4000 },
+            'KLX230': { general: 2200, full: 4800, brake: 1500, engine: 3000, tyre: 1000, electrical: 1200 }
+        };
+
+        let selectedServiceKey = null;
+        let selectedServiceName = null;
+        let selectedServicePrice = 0;
+        let selectedTimeSlot = null;
+        let selectedPaymentMethod = null;
+
+        // Set min date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('serviceDate').setAttribute('min', today);
+
+        function updateServicePrices() {
+            const bikeName = document.getElementById('bikeModel').value;
+            
+            if (bikeName && bikePrices[bikeName]) {
+                const prices = bikePrices[bikeName];
+                document.getElementById('price-general').innerHTML = `₹${prices.general}`;
+                document.getElementById('price-full').innerHTML = `₹${prices.full}`;
+                document.getElementById('price-brake').innerHTML = `₹${prices.brake}`;
+                document.getElementById('price-engine').innerHTML = `₹${prices.engine}`;
+                document.getElementById('price-tyre').innerHTML = `₹${prices.tyre}`;
+                document.getElementById('price-electrical').innerHTML = `₹${prices.electrical}`;
+            }
+            
+            document.getElementById('summaryBike').innerText = bikeName || 'Not selected';
+            
+            // Reset selected service
+            if (selectedServiceKey) {
+                selectedServiceKey = null;
+                selectedServiceName = null;
+                selectedServicePrice = 0;
+                document.querySelectorAll('.service-type-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                document.getElementById('summaryService').innerText = 'Not selected';
+                document.getElementById('summaryCost').innerText = '₹0';
+                updateTotal();
+            }
+        }
+
+        function selectService(element, serviceName, serviceKey) {
+            const bikeName = document.getElementById('bikeModel').value;
+            if (!bikeName) {
+                alert('❌ Please select your bike model first!');
+                return;
+            }
+            
+            document.querySelectorAll('.service-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            element.classList.add('selected');
+            
+            selectedServiceKey = serviceKey;
+            selectedServiceName = serviceName;
+            selectedServicePrice = bikePrices[bikeName][serviceKey];
+            
+            document.getElementById('summaryService').innerText = serviceName;
+            document.getElementById('summaryCost').innerText = `₹${selectedServicePrice}`;
+            updateTotal();
+        }
+
+        function updateTotal() {
+            const cost = selectedServicePrice || 0;
+            const gst = cost * 0.18;
+            const total = cost + gst;
+            
+            document.getElementById('summaryGST').innerHTML = `₹${Math.round(gst)}`;
+            document.getElementById('summaryTotal').innerHTML = `₹${Math.round(total)}`;
+        }
+
+        function loadTimeSlots() {
+            const date = document.getElementById('serviceDate').value;
+            if (!date) return;
+            
+            document.getElementById('summaryDate').innerText = date;
+            
+            const slots = ['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];
+            
+            const container = document.getElementById('timeSlots');
+            container.innerHTML = '';
+            
+            slots.forEach(slot => {
+                const slotDiv = document.createElement('div');
+                slotDiv.className = 'time-slot';
+                slotDiv.innerText = slot;
+                slotDiv.onclick = () => selectTimeSlot(slotDiv, slot);
+                container.appendChild(slotDiv);
+            });
+        }
+
+        function selectTimeSlot(element, slot) {
+            document.querySelectorAll('.time-slot').forEach(el => {
+                el.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedTimeSlot = slot;
+            document.getElementById('summaryTime').innerText = slot;
+        }
+
+        function proceedToPayment() {
+            const bikeName = document.getElementById('bikeModel').value;
+            const date = document.getElementById('serviceDate').value;
+            
+            if (!bikeName) { alert('❌ Please select your bike model'); return; }
+            if (!selectedServiceKey) { alert('❌ Please select a service type'); return; }
+            if (!date) { alert('❌ Please select a service date'); return; }
+            if (!selectedTimeSlot) { alert('❌ Please select a time slot'); return; }
+            
+            const cost = selectedServicePrice;
+            const gst = cost * 0.18;
+            const total = cost + gst;
+            
+            const paymentDetails = `
+                <div class="payment-detail">
+                    <p><strong>🏍️ Bike:</strong> ${bikeName}</p>
+                    <p><strong>🔧 Service:</strong> ${selectedServiceName}</p>
+                    <p><strong>📅 Date:</strong> ${date} | ${selectedTimeSlot}</p>
+                    <hr>
+                    <p><strong>Service Cost:</strong> ₹${cost}</p>
+                    <p><strong>GST (18%):</strong> ₹${Math.round(gst)}</p>
+                    <p><strong style="color: #00ff00;">Total Amount:</strong> ₹${Math.round(total)}</p>
+                </div>
+            `;
+            
+            document.getElementById('paymentDetails').innerHTML = paymentDetails;
+            document.getElementById('paymentModal').classList.add('active');
+        }
+
+        function selectPaymentMethod(element, method) {
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedPaymentMethod = method;
+        }
+
+        function completePayment() {
+            if (!selectedPaymentMethod) {
+                alert('❌ Please select a payment method');
+                return;
+            }
+            
+            fetch('/check_session')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        const bikeName = document.getElementById('bikeModel').value;
+                        const date = document.getElementById('serviceDate').value;
+                        const total = Math.round(selectedServicePrice + (selectedServicePrice * 0.18));
+                        const bookingId = 'KAW' + Math.floor(Math.random() * 1000000);
+                        
+                        // Show notification
+                        showNotification(bikeName, selectedServiceName, date, selectedTimeSlot, total, bookingId, selectedPaymentMethod);
+                        
+                        // Close payment modal
+                        closePaymentModal();
+                        
+                        // Reset form
+                        resetForm();
+                    } else {
+                        sessionStorage.setItem('redirectAfterLogin', '/service');
+                        window.location.href = '/login';
+                    }
+                })
+                .catch(() => {
+                    sessionStorage.setItem('redirectAfterLogin', '/service');
+                    window.location.href = '/login';
+                });
+        }
+
+        function showNotification(bike, service, date, time, amount, bookingId, paymentMethod) {
+            const methodNames = {
+                'card': '💳 Credit/Debit Card',
+                'upi': '📱 UPI',
+                'netbanking': '🏦 Net Banking',
+                'wallet': '👛 Mobile Wallet',
+                'cod': '💰 Cash on Service',
+                'emi': '📊 No Cost EMI'
+            };
+            
+            const notificationBody = document.getElementById('notificationBody');
+            notificationBody.innerHTML = `
+                <p><strong>✅ Booking Successful!</strong></p>
+                <p><strong>Booking ID:</strong> ${bookingId}</p>
+                <p><strong>Bike:</strong> ${bike}</p>
+                <p><strong>Service:</strong> ${service}</p>
+                <p><strong>Date:</strong> ${date} at ${time}</p>
+                <p><strong>Amount Paid:</strong> ₹${amount}</p>
+                <p><strong>Payment Method:</strong> ${methodNames[paymentMethod]}</p>
+                <hr>
+                <p class="text-success"><i class="fas fa-envelope"></i> Confirmation sent to your email</p>
+                <p class="text-muted small">You will receive SMS confirmation shortly</p>
+            `;
+            
+            const toast = document.getElementById('notificationToast');
+            toast.classList.add('show');
+            
+            // Auto hide after 8 seconds
+            setTimeout(() => {
+                closeNotification();
+            }, 8000);
+        }
+
+        function closeNotification() {
+            document.getElementById('notificationToast').classList.remove('show');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+            selectedPaymentMethod = null;
+        }
+
+        function resetForm() {
+            document.getElementById('bikeModel').value = '';
+            document.getElementById('problemDesc').value = '';
+            document.getElementById('serviceDate').value = '';
+            document.getElementById('additionalNotes').value = '';
+            document.getElementById('timeSlots').innerHTML = '<div class="text-muted small">Please select a date first</div>';
+            
+            selectedServiceKey = null;
+            selectedServiceName = null;
+            selectedServicePrice = 0;
+            selectedTimeSlot = null;
+            
+            document.querySelectorAll('.service-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            document.getElementById('summaryBike').innerText = 'Not selected';
+            document.getElementById('summaryService').innerText = 'Not selected';
+            document.getElementById('summaryCost').innerText = '₹0';
+            document.getElementById('summaryGST').innerText = '₹0';
+            document.getElementById('summaryTotal').innerText = '₹0';
+            document.getElementById('summaryDate').innerText = 'Not selected';
+            document.getElementById('summaryTime').innerText = 'Not selected';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kawasaki India - Official Website</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            background: #f5f5f5;
+        }
+
+        .top-bar {
+            background: #1a1a1a;
+            color: #888;
+            font-size: 12px;
+            padding: 8px 0;
+        }
+
+        .top-bar a {
+            color: #888;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        .top-bar a:hover {
+            color: #00ff00;
+        }
+
+        .date-time {
+            color: #00ff00;
+        }
+
+        .main-nav {
+            background: black;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #00ff00 !important;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: white;
+            font-size: 12px;
+            display: block;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu li a {
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-menu li a:hover {
+            color: #00ff00;
+        }
+
+        .hero-slider {
+            position: relative;
+            height: 85vh;
+            min-height: 600px;
+            overflow: hidden;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+        }
+
+        .slide-content {
+            position: absolute;
+            bottom: 20%;
+            left: 10%;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            max-width: 500px;
+            z-index: 2;
+        }
+
+        .slide-content h2 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .slide-content p {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+        }
+
+        .btn-explore {
+            background: #00ff00;
+            color: black;
+            padding: 12px 35px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .btn-explore:hover {
+            background: #00cc00;
+            transform: translateY(-3px);
+        }
+
+        .slider-nav {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .slider-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .slider-dot.active {
+            background: #00ff00;
+            width: 30px;
+            border-radius: 10px;
+        }
+
+        .slider-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 10;
+            transition: 0.3s;
+        }
+
+        .slider-arrow:hover {
+            background: rgba(0,255,0,0.5);
+        }
+
+        .slider-arrow.prev {
+            left: 20px;
+        }
+
+        .slider-arrow.next {
+            right: 20px;
+        }
+
+        .product-section {
+            padding: 60px 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: #00ff00;
+            margin: 15px auto;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        .product-item {
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .product-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .product-item img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+
+        .product-item h3 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .product-item .tag {
+            color: #00ff00;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .product-item .price {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .featured-section {
+            padding: 60px 0;
+            background: #f0f0f0;
+        }
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 0 20px;
+        }
+
+        .featured-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            cursor: pointer;
+            height: 300px;
+        }
+
+        .featured-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .featured-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .featured-card .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, black);
+            padding: 30px;
+            color: white;
+        }
+
+        .footer {
+            background: #1a1a1a;
+            color: #888;
+            padding: 50px 0 20px;
+        }
+
+        .footer h5 {
+            color: white;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .footer a {
+            color: #888;
+            text-decoration: none;
+            font-size: 12px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .footer a:hover {
+            color: #00ff00;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            width: 35px;
+            height: 35px;
+            background: #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-icons a:hover {
+            background: #00ff00;
+            color: black;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid #333;
+            font-size: 12px;
+        }
+
+        .modal-content {
+            border-radius: 15px;
+        }
+
+        .btn-login {
+            background: #00ff00;
+            border: none;
+            padding: 12px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                flex-direction: column;
+                background: black;
+                padding: 20px;
+                display: none;
+            }
+            .featured-grid {
+                grid-template-columns: 1fr;
+            }
+            .slide-content h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar -->
+<div class="top-bar">
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <i class="fas fa-globe"></i> KAWASAKI INDIA
+            </div>
+            <div class="col-6 text-end">
+                <i class="fas fa-search"></i>
+                <a href="/home">HOME</a>
+                <a href="/select_role">DASHBOARD</a>  <!-- ← CHANGE THIS LINE ONLY -->
+                <a href="/logout">LOGOUT</a>
+                <span class="date-time" id="currentDateTime"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Main Navigation -->
+    <nav class="main-nav">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-2">
+                    <!-- UPDATED: Logo links to /home -->
+                    <a href="/home" class="logo">
+                        KAWASAKI
+                        <span>Let the Good Times Roll</span>
+                    </a>
+                </div>
+                <div class="col-md-10">
+                    <ul class="nav-menu">
+                        <li><a href="/home">PRODUCT</a></li>
+                        <li><a href="javascript:void(0)" onclick="redirectToPage('/parts')">PARTS & ACCESSORIES</a></li>
+                        <li><a href="javascript:void(0)" onclick="redirectToPage('/clothing')">CLOTHING & MERCHANDISE</a></li>
+                        <li><a href="javascript:void(0)" onclick="redirectToPage('/purchase_tools')">PURCHASE TOOLS</a></li>
+                        <li><a href="javascript:void(0)" onclick="redirectToPage('/service')">SERVICE</a></li>
+                        <li><a href="javascript:void(0)" onclick="redirectToPage('/racing')">RACING</a></li>
+                        <li><a href="javascript:void(0)" onclick="redirectToPage('/news')">NEWS</a></li>
+                        <li><a href="javascript:void(0)" onclick="redirectToPage('/green_academy')">GREEN ACADEMY</a></li>
+                        <li><a href="javascript:void(0)" onclick="redirectToPage('/heritage')">HERITAGE</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Slider -->
+    <div class="hero-slider" id="home">
+        <div class="slider-container">
+            <div class="slide active" style="background-image: url('{{ url_for('static', filename='images/h2.jpg') }}'); background-size: cover; background-position: center;">
+                <div class="slide-content">
+                    <h2>Ninja H2 | 2026</h2>
+                    <p>The ultimate hyper-sport machine with supercharged power</p>
+                    <a href="javascript:void(0)" class="btn-explore" onclick="redirectToPage('/bike/Ninja H2')">DISCOVER MORE</a>
+                </div>
+            </div>
+            <div class="slide" style="background-image: url('{{ url_for('static', filename='images/ninja400.jpg') }}'); background-size: cover; background-position: center;">
+                <div class="slide-content">
+                    <h2>New 2026 Ninja 400</h2>
+                    <p>The perfect entry-level supersport</p>
+                    <a href="javascript:void(0)" class="btn-explore" onclick="redirectToPage('/bike/Ninja 400')">LEARN MORE</a>
+                </div>
+            </div>
+            <div class="slide" style="background-image: url('{{ url_for('static', filename='images/z900.jpg') }}'); background-size: cover; background-position: center;">
+                <div class="slide-content">
+                    <h2>Z900 | 2026</h2>
+                    <p>Sugomi performance - The ultimate street fighter</p>
+                    <a href="javascript:void(0)" class="btn-explore" onclick="redirectToPage('/bike/Z900')">EXPLORE</a>
+                </div>
+            </div>
+            <div class="slide" style="background-image: url('{{ url_for('static', filename='images/versys650.jpg') }}'); background-size: cover; background-position: center;">
+                <div class="slide-content">
+                    <h2>Versys 650 | 2026</h2>
+                    <p>Adventure touring for every terrain</p>
+                    <a href="javascript:void(0)" class="btn-explore" onclick="redirectToPage('/bike/Versys 650')">VIEW DETAILS</a>
+                </div>
+            </div>
+            <div class="slide" style="background-image: url('{{ url_for('static', filename='images/ninja650.jpg') }}'); background-size: cover; background-position: center;">
+                <div class="slide-content">
+                    <h2>New 2026 Ninja 650</h2>
+                    <p>Versatile performance for every ride</p>
+                    <a href="javascript:void(0)" class="btn-explore" onclick="redirectToPage('/bike/Ninja 650')">EXPLORE</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slider-arrow prev" onclick="changeSlide(-1)">&#10094;</div>
+        <div class="slider-arrow next" onclick="changeSlide(1)">&#10095;</div>
+        <div class="slider-nav" id="sliderDots"></div>
+    </div>
+
+    <!-- Product Grid Section -->
+    <section class="product-section">
+        <div class="container">
+            <h2 class="section-title">PRODUCT LINEUP</h2>
+            <div class="product-grid">
+                <div class="product-item" onclick="redirectToPage('/bike/Ninja H2')">
+                    <img src="{{ url_for('static', filename='images/h2.jpg') }}" alt="Ninja H2">
+                    <h3>Ninja H2</h3>
+                    <div class="tag">NEW 2026</div>
+                    <div class="price">Ex-showroom: ₹79.90 Lakh</div>
+                </div>
+                <div class="product-item" onclick="redirectToPage('/bike/Ninja 400')">
+                    <img src="{{ url_for('static', filename='images/ninja400.jpg') }}" alt="Ninja 400">
+                    <h3>Ninja 400</h3>
+                    <div class="tag">NEW 2026</div>
+                    <div class="price">Ex-showroom: ₹4.73 Lakh</div>
+                </div>
+                <div class="product-item" onclick="redirectToPage('/bike/Z900')">
+                    <img src="{{ url_for('static', filename='images/z900.jpg') }}" alt="Z900">
+                    <h3>Z900</h3>
+                    <div class="tag">NEW 2026</div>
+                    <div class="price">Ex-showroom: ₹8.93 Lakh</div>
+                </div>
+                <div class="product-item" onclick="redirectToPage('/bike/Versys 650')">
+                    <img src="{{ url_for('static', filename='images/versys650.jpg') }}" alt="Versys 650">
+                    <h3>Versys 650</h3>
+                    <div class="tag">2026</div>
+                    <div class="price">Ex-showroom: ₹7.35 Lakh</div>
+                </div>
+                <div class="product-item" onclick="redirectToPage('/bike/Ninja 650')">
+                    <img src="{{ url_for('static', filename='images/ninja650.jpg') }}" alt="Ninja 650">
+                    <h3>Ninja 650</h3>
+                    <div class="tag">NEW 2026</div>
+                    <div class="price">Ex-showroom: ₹6.93 Lakh</div>
+                </div>
+                <div class="product-item" onclick="redirectToPage('/bike/Vulcan 900')">
+                    <img src="{{ url_for('static', filename='images/vulcan900.jpg') }}" alt="Vulcan 900">
+                    <h3>Vulcan 900</h3>
+                    <div class="tag">2026</div>
+                    <div class="price">Ex-showroom: ₹9.45 Lakh</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Bikes Section -->
+    <section class="featured-section">
+        <div class="container">
+            <h2 class="section-title">FEATURED MODELS</h2>
+            <div class="featured-grid">
+                <div class="featured-card" onclick="redirectToPage('/bike/Ninja 400')">
+                    <img src="{{ url_for('static', filename='images/ninja400.jpg') }}" alt="Ninja 400">
+                    <div class="overlay">
+                        <h3>Ninja 400 | 2026</h3>
+                        <p>Starting ₹4.73 Lakh</p>
+                    </div>
+                </div>
+                <div class="featured-card" onclick="redirectToPage('/bike/Ninja 650')">
+                    <img src="{{ url_for('static', filename='images/ninja650.jpg') }}" alt="Ninja 650">
+                    <div class="overlay">
+                        <h3>Ninja 650 | 2026</h3>
+                        <p>Starting ₹6.93 Lakh</p>
+                    </div>
+                </div>
+                <div class="featured-card" onclick="redirectToPage('/bike/Z900')">
+                    <img src="{{ url_for('static', filename='images/z900.jpg') }}" alt="Z900">
+                    <div class="overlay">
+                        <h3>Z900 | 2026</h3>
+                        <p>Starting ₹8.93 Lakh</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <h5>FOLLOW US ON</h5>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <h5>SERVICE & WARRANTY</h5>
+                    <a href="/service">Service Centers</a>
+                    <a href="/service">Book a Service</a>
+                    <a href="#">Warranty Policy</a>
+                </div>
+                <div class="col-md-3">
+                    <h5>ABOUT KAWASAKI</h5>
+                    <a href="#">Company</a>
+                    <a href="#">Rideology</a>
+                    <a href="/racing">Racing</a>
+                    <a href="/heritage">Heritage</a>
+                </div>
+                <div class="col-md-3">
+                    <h5>CONTACT US</h5>
+                    <a href="#">Locate a Dealer</a>
+                    <a href="#">Useful Links</a>
+                    <a href="#">International Sites</a>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 Kawasaki Motors India. Let the Good Times Roll.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Slider variables
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let autoSlideInterval;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) slide.classList.add('active');
+            });
+            updateDots();
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide >= totalSlides) currentSlide = 0;
+            if (currentSlide < 0) currentSlide = totalSlides - 1;
+            showSlide(currentSlide);
+            resetAutoSlide();
+        }
+
+        function resetAutoSlide() {
+            if (autoSlideInterval) clearInterval(autoSlideInterval);
+            autoSlideInterval = setInterval(() => changeSlide(1), 5000);
+        }
+
+        function updateDots() {
+            const dots = document.querySelectorAll('.slider-dot');
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+        }
+
+        function createDots() {
+            const dotsContainer = document.getElementById('sliderDots');
+            if (!dotsContainer) return;
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('slider-dot');
+                if (i === 0) dot.classList.add('active');
+                dot.onclick = () => {
+                    currentSlide = i;
+                    showSlide(currentSlide);
+                    resetAutoSlide();
+                };
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+            const date = now.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            const dateTimeElement = document.getElementById('currentDateTime');
+            if (dateTimeElement) {
+                dateTimeElement.innerHTML = ` ${time} | ${date}`;
+            }
+        }
+
+        // Redirect to page with login check
+        function redirectToPage(page) {
+            fetch('/check_session')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        window.location.href = page;
+                    } else {
+                        sessionStorage.setItem('redirectAfterLogin', page);
+                        window.location.href = '/login';
+                    }
+                })
+                .catch(() => {
+                    sessionStorage.setItem('redirectAfterLogin', page);
+                    window.location.href = '/login';
+                });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            createDots();
+            resetAutoSlide();
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        });
+    </script>
+</body>
+</html>

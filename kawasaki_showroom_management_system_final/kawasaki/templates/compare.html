@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Bikes - Kawasaki Showroom</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .compare-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin: 30px 0;
+            overflow: hidden;
+        }
+        
+        .compare-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .bike-selector {
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .bike-card {
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            position: relative;
+        }
+        
+        .bike-card:hover {
+            border-color: #1e3c72;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .bike-card.selected {
+            border-color: #1e3c72;
+            background: #f8f9ff;
+        }
+        
+        .bike-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .bike-card .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e3c72;
+            margin: 10px 0;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            margin: 30px 0;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .comparison-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .comparison-table .bike-column {
+            min-width: 200px;
+        }
+        
+        .spec-highlight {
+            background: #e8f4fd;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+        
+        .btn-compare {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-compare:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.3);
+        }
+        
+        .feature-badge {
+            background: #27ae60;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="fas fa-motorcycle"></i> Kawasaki Showroom
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/bikes">
+                            <i class="fas fa-motorcycle"></i> All Bikes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/scooters">
+                            <i class="fas fa-scooter"></i> Scooters
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my_bookings">
+                            <i class="fas fa-calendar-check"></i> My Bookings
+                        </a>
+                    </li>
+                </ul>
+                <<div>
+    <a href="/home" class="btn btn-outline-light me-2">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <a href="/dashboard" class="btn btn-outline-light me-2">
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+    </a>
+    <a href="/logout" class="btn btn-danger">Logout</a>
+</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="compare-container">
+            <div class="compare-header">
+                <h1><i class="fas fa-balance-scale"></i> Compare Bikes</h1>
+                <p>Select up to 3 bikes to compare their specifications side by side</p>
+            </div>
+            
+            <div class="bike-selector">
+                <h4>Select Bikes to Compare</h4>
+                <div class="row" id="bikeGrid">
+                    {% for bike in bikes %}
+                    <div class="col-md-4 col-sm-6">
+                        <div class="bike-card" data-bike-id="{{ bike.id }}">
+                            {% if bike.image %}
+                            <img src="{{ url_for('static', filename='images/' + bike.image) }}" alt="{{ bike.name }}">
+                            {% else %}
+                            <div style="width: 100%; height: 150px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                                <i class="fas fa-motorcycle fa-3x text-muted"></i>
+                            </div>
+                            {% endif %}
+                            <h5>{{ bike.name }}</h5>
+                            <p class="text-muted">{{ bike.category }} • {{ bike.cc }}cc</p>
+                            <div class="price">₹{{ "{:,}".format(bike.price) }}</div>
+                            <div class="form-check">
+                                <input class="form-check-input bike-checkbox" type="checkbox" value="{{ bike.id }}" id="bike{{ bike.id }}">
+                                <label class="form-check-label" for="bike{{ bike.id }}">
+                                    Select to Compare
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="text-center">
+                    <button class="btn-compare" id="compareBtn" disabled>
+                        <i class="fas fa-balance-scale"></i> Compare Selected Bikes
+                    </button>
+                </div>
+            </div>
+            
+            <div id="comparisonResults" style="display: none;">
+                <div class="p-4">
+                    <h4 class="mb-3">Comparison Results</h4>
+                    <div class="table-responsive">
+                        <table class="comparison-table table">
+                            <thead>
+                                <tr id="comparisonHeader">
+                                    <th>Specifications</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparisonBody">
+                                <tr>
+                                    <td>Engine CC</td>
+                                </tr>
+                                <tr>
+                                    <td>Power</td>
+                                </tr>
+                                <tr>
+                                    <td>Top Speed</td>
+                                </tr>
+                                <tr>
+                                    <td>Mileage</td>
+                                </tr>
+                                <tr>
+                                    <td>Fuel Type</td>
+                                </tr>
+                                <tr>
+                                    <td>Price</td>
+                                </tr>
+                                <tr>
+                                    <td>Category</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="emptyState" class="empty-state">
+                <i class="fas fa-motorcycle"></i>
+                <h4>No bikes selected</h4>
+                <p>Select bikes above to start comparing</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedBikes = [];
+        
+        document.querySelectorAll('.bike-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const bikeId = this.value;
+                const bikeCard = this.closest('.bike-card');
+                
+                if (this.checked) {
+                    if (selectedBikes.length < 3) {
+                        selectedBikes.push(bikeId);
+                        bikeCard.classList.add('selected');
+                    } else {
+                        this.checked = false;
+                        alert('You can compare maximum 3 bikes at a time');
+                        return;
+                    }
+                } else {
+                    selectedBikes = selectedBikes.filter(id => id !== bikeId);
+                    bikeCard.classList.remove('selected');
+                }
+                
+                document.getElementById('compareBtn').disabled = selectedBikes.length < 2;
+                updateComparison();
+            });
+        });
+        
+        document.getElementById('compareBtn').addEventListener('click', function() {
+            if (selectedBikes.length >= 2) {
+                updateComparison();
+            }
+        });
+        
+        async function updateComparison() {
+            if (selectedBikes.length < 2) {
+                document.getElementById('comparisonResults').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/compare_bikes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ bike_ids: selectedBikes })
+                });
+                
+                const bikes = await response.json();
+                
+                // Update header
+                let headerHTML = '<th>Specifications</th>';
+                bikes.forEach(bike => {
+                    headerHTML += `<th class="bike-column">${bike.name}</th>`;
+                });
+                document.getElementById('comparisonHeader').innerHTML = headerHTML;
+                
+                // Update body
+                const specs = ['cc', 'power', 'top_speed', 'mileage', 'fuel_type', 'price', 'category'];
+                const specLabels = ['Engine CC', 'Power', 'Top Speed (km/h)', 'Mileage (km/l)', 'Fuel Type', 'Price (₹)', 'Category'];
+                
+                let bodyHTML = '';
+                specs.forEach((spec, index) => {
+                    bodyHTML += `<tr><td>${specLabels[index]}</td>`;
+                    bikes.forEach(bike => {
+                        let value = bike[spec];
+                        if (spec === 'price') {
+                            value = '₹' + value.toLocaleString();
+                        }
+                        bodyHTML += `<td>${value}</td>`;
+                    });
+                    bodyHTML += '</tr>';
+                });
+                document.getElementById('comparisonBody').innerHTML = bodyHTML;
+                
+                document.getElementById('comparisonResults').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'none';
+                
+            } catch (error) {
+                console.error('Error fetching comparison data:', error);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Green Academy - Kawasaki Off-Road Training Program</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: black;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar-brand {
+            color: #00ff00 !important;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .navbar-brand i {
+            margin-right: 10px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #1a4d2e 0%, #0d2e1a 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+        }
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .hero-section h1 i {
+            color: #00ff00;
+            margin-right: 15px;
+        }
+        .hero-section p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Section Title */
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 50px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: #00ff00;
+        }
+
+        /* Program Overview */
+        .overview-section {
+            padding: 60px 0;
+            background: white;
+        }
+        .overview-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #444;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Bike Showcase */
+        .bike-section {
+            padding: 60px 0;
+            background: #f0f2f5;
+        }
+        .bike-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .bike-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        .bike-card .info {
+            padding: 25px;
+        }
+        .bike-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .bike-card .price {
+            color: #00ff00;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .btn-enroll-bike {
+            background: #00ff00;
+            color: black;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* Objectives Section */
+        .objectives-section {
+            padding: 60px 0;
+            background: white;
+        }
+        .objective-card {
+            text-align: center;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            height: 100%;
+        }
+        .objective-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            background: linear-gradient(135deg, #f8f9fa, #e8f5e9);
+        }
+        .objective-card i {
+            font-size: 45px;
+            color: #00ff00;
+            margin-bottom: 15px;
+        }
+        .objective-card h4 {
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .objective-card p {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Program Details */
+        .details-section {
+            padding: 60px 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+        }
+        .detail-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s;
+        }
+        .detail-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.2);
+        }
+        .detail-card i {
+            font-size: 40px;
+            color: #00ff00;
+            margin-bottom: 15px;
+        }
+        .detail-card h4 {
+            margin-bottom: 10px;
+        }
+
+        /* City Selection */
+        .city-section {
+            padding: 60px 0;
+            background: white;
+        }
+        .city-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .city-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .city-card:hover {
+            background: #e8f5e9;
+            transform: scale(1.05);
+        }
+        .city-card.selected {
+            background: #00ff00;
+            color: black;
+            border-color: #009900;
+            transform: scale(1.05);
+        }
+        .city-card i {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+        .city-card h5 {
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+        .city-card small {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+        .selected-city-display {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.1rem;
+        }
+        .enroll-btn {
+            background: #00ff00;
+            color: black;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+        .enroll-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(0,255,0,0.3);
+        }
+
+        /* Testimonials */
+        .testimonial-section {
+            padding: 60px 0;
+            background: #f0f2f5;
+        }
+        .testimonial-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .testimonial-card i {
+            font-size: 30px;
+            color: #00ff00;
+            margin-bottom: 15px;
+        }
+        .testimonial-card p {
+            font-style: italic;
+            color: #555;
+        }
+        .testimonial-card h6 {
+            margin-top: 10px;
+            color: #333;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a1a1a;
+            color: #888;
+            padding: 50px 0 20px;
+            text-align: center;
+        }
+        .footer a {
+            color: #888;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            color: #00ff00;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 { font-size: 2rem; }
+            .section-title { font-size: 1.5rem; }
+            .city-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/home">
+                <i class="fas fa-motorcycle"></i> KAWASAKI
+            </a>
+            <div>
+                <a href="/home" class="btn btn-outline-light me-2">Back to Home</a>
+                <a href="/logout" class="btn btn-outline-danger">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1><i class="fas fa-graduation-cap"></i> GREEN ACADEMY</h1>
+            <p>Welcome to Kawasaki Off-Road Training Program - A beginner-friendly training program designed to introduce participants to the excitement of off-road riding</p>
+        </div>
+    </section>
+
+    <!-- Program Overview -->
+    <section class="overview-section">
+        <div class="container">
+            <h2 class="section-title">Program Overview</h2>
+            <div class="overview-text">
+                <p>Welcome to the Off-Road Experience with Kawasaki, a beginner-friendly training program designed to introduce participants to the excitement of off-road riding on the <strong>Kawasaki KLX 230R S</strong>. This course focuses on developing essential riding skills, building confidence, and ensuring a safe and enjoyable off-road experience.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Bike -->
+    <section class="bike-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="bike-card">
+                        <img src="https://content2.kawasaki.com/ContentStorage/KMA/Products/12270/f9885e27-55c2-43d7-b0b4-3d89271142a8.jpg?w=640" alt="Kawasaki KLX 230R S">
+                        <div class="info">
+                            <h3>Kawasaki KLX 230R S</h3>
+                            <p>The advanced off-road bike designed for perfect learning experience</p>
+                            <div class="price">Ex-showroom: ₹3,95,000</div>
+                            <button class="btn-enroll-bike" onclick="redirectToLogin()">
+                                <i class="fas fa-motorcycle"></i> Book Test Ride
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Program Objectives (Working - Clickable Cards) -->
+    <section class="objectives-section">
+        <div class="container">
+            <h2 class="section-title">Program Objectives</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="objective-card" onclick="showObjectiveDetail('Hands-on Experience', 'Get hands-on experience with the Kawasaki KLX 230R S. Learn about its features, controls, and capabilities from expert trainers.')">
+                        <i class="fas fa-motorcycle"></i>
+                        <h4>Hands-on Experience</h4>
+                        <p>Familiarize Participants with the Kawasaki KLX 230R S - Gain hands-on experience with this advanced off-road bike.</p>
+                        <small class="text-muted">Click to learn more →</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="objective-card" onclick="showObjectiveDetail('Essential Techniques', 'Master fundamental riding techniques including body positioning, throttle control, braking, and cornering on various terrains.')">
+                        <i class="fas fa-road"></i>
+                        <h4>Essential Techniques</h4>
+                        <p>Learn fundamental riding techniques for handling diverse terrains and challenging conditions.</p>
+                        <small class="text-muted">Click to learn more →</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="objective-card" onclick="showObjectiveDetail('Build Confidence', 'Develop the skills and confidence needed to navigate mud, sand, gravel, rocky paths, and steep inclines safely.')">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>Build Confidence</h4>
+                        <p>Develop skills and confidence needed to navigate various off-road environments safely.</p>
+                        <small class="text-muted">Click to learn more →</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="objective-card" onclick="showObjectiveDetail('Safe Riding Practices', 'Learn proper safety protocols, gear usage, emergency procedures, and risk assessment for off-road riding.')">
+                        <i class="fas fa-shield-alt"></i>
+                        <h4>Safe Riding Practices</h4>
+                        <p>Emphasize safety through proper riding techniques and equipment use.</p>
+                        <small class="text-muted">Click to learn more →</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="objective-card" onclick="showObjectiveDetail('Fun Learning Experience', 'Enjoy a comprehensive training session designed to be educational and enjoyable with practical exercises and guidance.')">
+                        <i class="fas fa-smile"></i>
+                        <h4>Fun Learning Experience</h4>
+                        <p>Enjoy a comprehensive training session designed to be educational and enjoyable.</p>
+                        <small class="text-muted">Click to learn more →</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="objective-card" onclick="showObjectiveDetail('Certificate of Completion', 'Receive an official Kawasaki Green Academy certificate recognized by Kawasaki Motors India after successful completion.')">
+                        <i class="fas fa-certificate"></i>
+                        <h4>Certificate of Completion</h4>
+                        <p>Receive official Kawasaki Green Academy certificate after successful completion.</p>
+                        <small class="text-muted">Click to learn more →</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Program Details -->
+    <section class="details-section">
+        <div class="container">
+            <h2 class="section-title" style="color: white;">Program Details</h2>
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="detail-card">
+                        <i class="fas fa-clock"></i>
+                        <h4>Duration</h4>
+                        <p>1 Day (8 Hours)<br>9:00 AM - 5:00 PM</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="detail-card">
+                        <i class="fas fa-users"></i>
+                        <h4>Group Size</h4>
+                        <p>Maximum 8 participants<br>per batch</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="detail-card">
+                        <i class="fas fa-helmet-safety"></i>
+                        <h4>Gear Provided</h4>
+                        <p>Helmet, Gloves,<br>Knee & Elbow guards</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="detail-card">
+                        <i class="fas fa-rupee-sign"></i>
+                        <h4>Program Fee</h4>
+                        <p>₹5,999 + GST<br>Training + Bike + Gear</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- City Selection -->
+    <section class="city-section">
+        <div class="container">
+            <h2 class="section-title">Select Your Training City</h2>
+            <div class="city-grid" id="cityGrid">
+                <div class="city-card" onclick="selectCity(this, 'Mumbai')">
+                    <i class="fas fa-city"></i>
+                    <h5>Mumbai</h5>
+                    <small>Thane Center</small>
+                </div>
+                <div class="city-card" onclick="selectCity(this, 'Delhi NCR')">
+                    <i class="fas fa-city"></i>
+                    <h5>Delhi NCR</h5>
+                    <small>Gurugram Center</small>
+                </div>
+                <div class="city-card" onclick="selectCity(this, 'Bangalore')">
+                    <i class="fas fa-city"></i>
+                    <h5>Bangalore</h5>
+                    <small>Electronic City</small>
+                </div>
+                <div class="city-card" onclick="selectCity(this, 'Chennai')">
+                    <i class="fas fa-city"></i>
+                    <h5>Chennai</h5>
+                    <small>OMR Center</small>
+                </div>
+                <div class="city-card" onclick="selectCity(this, 'Hyderabad')">
+                    <i class="fas fa-city"></i>
+                    <h5>Hyderabad</h5>
+                    <small>Gachibowli</small>
+                </div>
+                <div class="city-card" onclick="selectCity(this, 'Pune')">
+                    <i class="fas fa-city"></i>
+                    <h5>Pune</h5>
+                    <small>Hinjewadi</small>
+                </div>
+                <div class="city-card" onclick="selectCity(this, 'Kolkata')">
+                    <i class="fas fa-city"></i>
+                    <h5>Kolkata</h5>
+                    <small>Rajarhat</small>
+                </div>
+                <div class="city-card" onclick="selectCity(this, 'Ahmedabad')">
+                    <i class="fas fa-city"></i>
+                    <h5>Ahmedabad</h5>
+                    <small>SG Highway</small>
+                </div>
+                <div class="city-card" onclick="selectCity(this, 'Jaipur')">
+                    <i class="fas fa-city"></i>
+                    <h5>Jaipur</h5>
+                    <small>Ajmer Road</small>
+                </div>
+                <div class="city-card" onclick="selectCity(this, 'Lucknow')">
+                    <i class="fas fa-city"></i>
+                    <h5>Lucknow</h5>
+                    <small>Gomti Nagar</small>
+                </div>
+            </div>
+            <div id="selectedCityDisplay" class="selected-city-display"></div>
+            <div class="text-center">
+                <button class="enroll-btn" onclick="enrollProgram()">
+                    <i class="fas fa-pen-alt"></i> Enroll Now
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonial-section">
+        <div class="container">
+            <h2 class="section-title">What Our Riders Say</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        <p>"Amazing experience! The trainers were professional and patient. I learned so much about off-road riding."</p>
+                        <h6>- Rajesh Sharma</h6>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        <p>"The KLX 230R S is perfect for beginners. The Green Academy gave me the confidence to ride off-road."</p>
+                        <h6>- Priya Mehta</h6>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        <p>"Worth every rupee! Professional training, great bike, and a fantastic learning environment."</p>
+                        <h6>- Vikram Singh</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join Us Section -->
+    <section style="padding: 60px 0; background: #e8f5e9;">
+        <div class="container text-center">
+            <i class="fas fa-quote-left fa-3x" style="color: #00ff00;"></i>
+            <h3 class="mt-3">Join us for an exciting journey into the world of off-road riding</h3>
+            <p class="lead">Whether you're new to the sport or looking to sharpen your skills, our program is here to guide you every step of the way.</p>
+            <button class="btn btn-success btn-lg mt-3" onclick="redirectToLogin()">
+                <i class="fas fa-motorcycle"></i> Book Your Slot Today!
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Kawasaki Motors India. Let the Good Times Roll.</p>
+            <div class="mt-2">
+                <small>Off-Road Training Program | Green Academy | Kawasaki India</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Objective Detail Modal -->
+    <div class="modal fade" id="objectiveModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="objectiveModalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="objectiveModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" onclick="redirectToLogin()">Enroll Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedCity = '';
+
+        function selectCity(element, city) {
+            // Remove selected class from all city cards
+            document.querySelectorAll('.city-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            // Add selected class to clicked card
+            element.classList.add('selected');
+            selectedCity = city;
+            document.getElementById('selectedCityDisplay').innerHTML = `
+                <i class="fas fa-check-circle" style="color: #00ff00;"></i> 
+                Selected Training Center: <strong>${city}</strong>
+                <br><small class="text-muted">Our team will contact you within 24 hours</small>
+            `;
+        }
+
+        function enrollProgram() {
+            if (!selectedCity) {
+                alert('❌ Please select a training city first!');
+                return;
+            }
+            redirectToLogin();
+        }
+
+        function showObjectiveDetail(title, description) {
+            document.getElementById('objectiveModalTitle').innerHTML = `<i class="fas fa-graduation-cap"></i> ${title}`;
+            document.getElementById('objectiveModalBody').innerHTML = `
+                <div class="text-center mb-3">
+                    <i class="fas fa-check-circle" style="font-size: 48px; color: #00ff00;"></i>
+                </div>
+                <p>${description}</p>
+                <hr>
+                <p class="text-muted">This objective is covered in our comprehensive off-road training program.</p>
+            `;
+            new bootstrap.Modal(document.getElementById('objectiveModal')).show();
+        }
+
+        function redirectToLogin() {
+            fetch('/check_session')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        let message = `Thank you for your interest in Green Academy!`;
+                        if (selectedCity) {
+                            message += `\nSelected City: ${selectedCity}\nOur team will contact you soon.`;
+                        }
+                        alert(message);
+                        window.location.href = '/dashboard';
+                    } else {
+                        sessionStorage.setItem('redirectAfterLogin', '/green_academy');
+                        window.location.href = '/login';
+                    }
+                })
+                .catch(() => {
+                    sessionStorage.setItem('redirectAfterLogin', '/green_academy');
+                    window.location.href = '/login';
+                });
+        }
+    </script>
+</body>
+</html>

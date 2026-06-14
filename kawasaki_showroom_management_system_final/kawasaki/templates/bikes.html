@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kawasaki Bikes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar-toggler {
+            border: none;
+        }
+        
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+        
+        .filters-sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .filter-section {
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        
+        .filter-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .filter-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .filter-title i {
+            margin-right: 10px;
+            color: #1e3c72;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .checkbox-item:hover {
+            background: #e9ecef;
+        }
+        
+        .checkbox-item input {
+            margin-right: 8px;
+        }
+        
+        .price-slider {
+            padding: 0 10px;
+        }
+        
+        .bike-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative;
+            height: 100%;
+        }
+        
+        .bike-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .bike-image {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bike-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .bike-card:hover .bike-image::before {
+            opacity: 1;
+        }
+        
+        .bike-image i {
+            font-size: 100px;
+            color: white;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .bike-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .bike-card:hover .bike-image img {
+            transform: scale(1.1);
+        }
+        
+        .bike-card .card-body {
+            padding: 20px;
+        }
+        
+        .bike-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .bike-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .bike-specs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .spec-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .spec-value {
+            font-weight: 600;
+            color: #1e3c72;
+            font-size: 16px;
+        }
+        
+        .spec-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .price {
+            color: #1e3c72;
+            font-weight: bold;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        
+        .category-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .btn-kawasaki {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn-kawasaki:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .search-sort-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .search-input {
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            padding: 12px 20px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+            outline: none;
+        }
+        
+        .sort-select {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        
+        .view-toggle {
+            display: flex;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .view-toggle button {
+            border: none;
+            background: white;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .view-toggle button.active {
+            background: #1e3c72;
+            color: white;
+        }
+        
+        .view-toggle button:hover:not(.active) {
+            background: #f8f9fa;
+        }
+        
+        .results-count {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .loading-spinner i {
+            font-size: 48px;
+            color: #1e3c72;
+        }
+        
+        /* List View Styles */
+        .list-view {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .list-view .bike-item {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .list-view .bike-card {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: auto;
+        }
+        
+        .list-view .bike-image {
+            width: 200px;
+            height: 150px;
+            flex-shrink: 0;
+        }
+        
+        .list-view .card-body {
+            flex: 1;
+        }
+        
+        .list-view .bike-specs {
+            display: flex;
+            gap: 20px;
+            justify-content: flex-start;
+        }
+        
+        @media (max-width: 768px) {
+            .filters-sidebar {
+                position: static;
+                margin-bottom: 30px;
+            }
+            
+            .bike-specs {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .list-view .bike-card {
+                flex-direction: column;
+            }
+            
+            .list-view .bike-image {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="fas fa-motorcycle"></i> Kawasaki Showroom
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/bikes">
+                            <i class="fas fa-motorcycle"></i> Bikes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/scooters">
+                            <i class="fas fa-scooter"></i> Scooters
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my_bookings">
+                            <i class="fas fa-calendar-check"></i> My Bookings
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <a href="/home" class="btn btn-outline-light btn-sm me-2">Home</a>
+                    <a href="/dashboard" class="btn btn-outline-light btn-sm me-2">Dashboard</a>
+                    <a href="/parts" class="btn btn-success btn-sm me-2">Shop</a>
+                    <span class="text-white me-2">Hi, {{ session.get('user_full_name', 'Guest') }}</span>
+                    <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="text-center mb-5">
+            <h1><i class="fas fa-motorcycle"></i> Kawasaki Bikes</h1>
+            <p class="text-muted">Explore our premium range of motorcycles with advanced filtering</p>
+        </div>
+
+        <!-- Search and Sort Bar -->
+        <div class="search-sort-bar">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control search-input border-0" placeholder="Search bikes..." id="bikeSearch">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select sort-select" id="sortSelect">
+                        <option value="name">Sort by Name</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="cc-low">CC: Low to High</option>
+                        <option value="cc-high">CC: High to Low</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="view-toggle">
+                        <button class="active" id="gridView">
+                            <i class="fas fa-th"></i> Grid
+                        </button>
+                        <button id="listView">
+                            <i class="fas fa-list"></i> List
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-2 text-end">
+                    <span class="results-count" id="resultsCount">0 bikes found</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Filters Sidebar -->
+            <div class="col-md-3">
+                <div class="filters-sidebar">
+                    <div class="filter-section">
+                        <div class="filter-title">
+                            <i class="fas fa-tags"></i> Category
+                        </div>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="sport" checked> Sport
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="naked" checked> Naked
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="touring" checked> Touring
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="cruiser" checked> Cruiser
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="superbike" checked> Superbike
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <div class="filter-title">
+                            <i class="fas fa-tachometer-alt"></i> Engine CC
+                        </div>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="300-500" checked> 300-500cc
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="600-800" checked> 600-800cc
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="900-1000" checked> 900-1000cc
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="1000+" checked> 1000cc+
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <div class="filter-title">
+                            <i class="fas fa-rupee-sign"></i> Price Range
+                        </div>
+                        <div class="price-slider">
+                            <input type="range" class="form-range" id="priceRange" min="250000" max="3500000" step="50000" value="3500000">
+                            <div class="d-flex justify-content-between">
+                                <small>₹2.5L</small>
+                                <small id="priceValue">₹35L</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <div class="filter-title">
+                            <i class="fas fa-gas-pump"></i> Fuel Type
+                        </div>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="petrol" checked> Petrol
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-kawasaki w-100" onclick="clearFilters()">
+                        <i class="fas fa-undo"></i> Clear All Filters
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Bikes Grid -->
+            <div class="col-md-9">
+                <div class="loading-spinner" id="loadingSpinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p class="mt-3">Loading bikes...</p>
+                </div>
+                
+                <div class="row" id="bikesContainer">
+                    {% for bike in bikes %}
+                    <div class="col-md-4 bike-item" data-category="{{ bike.category.lower() }}" data-cc="{{ bike.cc }}" data-price="{{ bike.price }}">
+                        <div class="bike-card" onclick="window.location.href='/bike/{{ bike.name }}'">
+                            <div class="bike-image">
+                                {% if bike.image %}
+                                <img src="{{ url_for('static', filename='images/' + bike.image) if not bike.image.startswith('http') else bike.image }}" alt="{{ bike.name }}">
+                                {% else %}
+                                <i class="fas fa-motorcycle"></i>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <div class="category-badge">{{ bike.category }}</div>
+                                <h5 class="bike-title">{{ bike.name }}</h5>
+                                <p class="bike-description">{{ bike.description[:80] if bike.description else 'No description available' }}...</p>
+                                
+                                <div class="bike-specs">
+                                    <div class="spec-item">
+                                        <div class="spec-value">{{ bike.cc }}cc</div>
+                                        <div class="spec-label">Engine</div>
+                                    </div>
+                                    <div class="spec-item">
+                                        <div class="spec-value">{{ bike.top_speed }} km/h</div>
+                                        <div class="spec-label">Top Speed</div>
+                                    </div>
+                                    <div class="spec-item">
+                                        <div class="spec-value">{{ bike.mileage }} km/l</div>
+                                        <div class="spec-label">Mileage</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="price">₹{{ "{:,}".format(bike.price) }}</div>
+                                <button class="btn-kawasaki" onclick="event.stopPropagation(); window.location.href='/book_test_ride'">
+                                    <i class="fas fa-calendar-alt"></i> Test Ride
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Grid and List View Toggle
+        document.getElementById('gridView').addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('listView').classList.remove('active');
+            
+            // Change to Grid View
+            const bikesContainer = document.getElementById('bikesContainer');
+            bikesContainer.classList.remove('list-view');
+            bikesContainer.classList.add('row');
+            
+            // Change each bike item to grid layout (col-md-4)
+            const bikeItems = document.querySelectorAll('.bike-item');
+            bikeItems.forEach(item => {
+                item.classList.remove('list-view-item');
+                item.classList.add('col-md-4');
+            });
+        });
+
+        document.getElementById('listView').addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('gridView').classList.remove('active');
+            
+            // Change to List View
+            const bikesContainer = document.getElementById('bikesContainer');
+            bikesContainer.classList.remove('row');
+            bikesContainer.classList.add('list-view');
+            
+            // Change each bike item to list layout
+            const bikeItems = document.querySelectorAll('.bike-item');
+            bikeItems.forEach(item => {
+                item.classList.remove('col-md-4');
+                item.classList.add('list-view-item');
+            });
+        });
+
+        // Price range slider
+        const priceRange = document.getElementById('priceRange');
+        const priceValue = document.getElementById('priceValue');
+        
+        priceRange.addEventListener('input', function() {
+            const value = parseInt(this.value);
+            priceValue.textContent = '₹' + (value / 100000).toFixed(1) + 'L';
+            filterBikes();
+        });
+
+        // Search functionality
+        document.getElementById('bikeSearch').addEventListener('input', function() {
+            filterBikes();
+        });
+
+        // Sort functionality
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            sortBikes(this.value);
+        });
+
+        // Filter checkboxes
+        document.querySelectorAll('.checkbox-item input').forEach(checkbox => {
+            checkbox.addEventListener('change', filterBikes);
+        });
+
+        function filterBikes() {
+            const searchTerm = document.getElementById('bikeSearch').value.toLowerCase();
+            const maxPrice = parseInt(priceRange.value);
+            
+            // Get selected categories
+            const selectedCategories = Array.from(document.querySelectorAll('.checkbox-item input[value*="sport"], .checkbox-item input[value*="naked"], .checkbox-item input[value*="touring"], .checkbox-item input[value*="cruiser"], .checkbox-item input[value*="superbike"]'))
+                .filter(cb => cb.checked).map(cb => cb.value);
+            
+            // Get selected CC ranges
+            const selectedCCRanges = Array.from(document.querySelectorAll('.checkbox-item input[value*="cc"]'))
+                .filter(cb => cb.checked).map(cb => cb.value);
+
+            const bikeItems = document.querySelectorAll('.bike-item');
+            let visibleCount = 0;
+
+            bikeItems.forEach(item => {
+                const category = item.dataset.category;
+                const cc = parseInt(item.dataset.cc);
+                const price = parseInt(item.dataset.price);
+                const bikeName = item.querySelector('.bike-title').textContent.toLowerCase();
+                const bikeDesc = item.querySelector('.bike-description').textContent.toLowerCase();
+
+                let show = true;
+
+                // Search filter
+                if (searchTerm && !bikeName.includes(searchTerm) && !bikeDesc.includes(searchTerm)) {
+                    show = false;
+                }
+
+                // Price filter
+                if (price > maxPrice) {
+                    show = false;
+                }
+
+                // Category filter
+                if (selectedCategories.length > 0 && !selectedCategories.includes(category)) {
+                    show = false;
+                }
+
+                // CC filter
+                if (selectedCCRanges.length > 0) {
+                    const ccMatch = selectedCCRanges.some(range => {
+                        if (range === '1000+') return cc >= 1000;
+                        const [min, max] = range.split('-').map(Number);
+                        return cc >= min && cc <= max;
+                    });
+                    if (!ccMatch) show = false;
+                }
+
+                item.style.display = show ? 'block' : 'none';
+                if (show) visibleCount++;
+            });
+
+            document.getElementById('resultsCount').textContent = `${visibleCount} bikes found`;
+        }
+
+        function sortBikes(sortType) {
+            const container = document.getElementById('bikesContainer');
+            const items = Array.from(container.children);
+
+            items.sort((a, b) => {
+                const aData = a.dataset;
+                const bData = b.dataset;
+
+                switch(sortType) {
+                    case 'price-low':
+                        return parseInt(aData.price) - parseInt(bData.price);
+                    case 'price-high':
+                        return parseInt(bData.price) - parseInt(aData.price);
+                    case 'cc-low':
+                        return parseInt(aData.cc) - parseInt(bData.cc);
+                    case 'cc-high':
+                        return parseInt(bData.cc) - parseInt(aData.cc);
+                    default:
+                        return a.querySelector('.bike-title').textContent.localeCompare(b.querySelector('.bike-title').textContent);
+                }
+            });
+
+            items.forEach(item => container.appendChild(item));
+        }
+
+        function clearFilters() {
+            document.getElementById('bikeSearch').value = '';
+            priceRange.value = 3500000;
+            priceValue.textContent = '₹35L';
+            document.querySelectorAll('.checkbox-item input').forEach(cb => {
+                cb.checked = true;
+            });
+            document.getElementById('sortSelect').value = 'name';
+            filterBikes();
+            sortBikes('name');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const spinner = document.getElementById('loadingSpinner');
+                if (spinner) spinner.style.display = 'none';
+            }, 500);
+            filterBikes();
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

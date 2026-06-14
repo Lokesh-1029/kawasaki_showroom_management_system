@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Kawasaki Showroom</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background: #1a1a2e;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 12px 0;
+        }
+        
+        .navbar-brand {
+            font-size: 22px;
+            font-weight: bold;
+            color: #00ff00 !important;
+        }
+        
+        .nav-link {
+            color: white !important;
+            font-size: 14px;
+        }
+        
+        .nav-link:hover {
+            color: #00ff00 !important;
+        }
+        
+        .welcome-banner {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            border-radius: 12px;
+            padding: 30px;
+            color: white;
+            margin-bottom: 25px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: 0.3s;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .stat-card i {
+            font-size: 40px;
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+        
+        .stat-card .label {
+            color: #666;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        
+        .ai-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .ai-badge {
+            background: #1e3c72;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            display: inline-block;
+        }
+        
+        .recommendation-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .recommendation-item:hover {
+            background: #e9ecef;
+            transform: translateY(-3px);
+        }
+        
+        .recommendation-item i {
+            font-size: 28px;
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+        
+        .action-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            height: 100%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .action-card i {
+            font-size: 45px;
+            color: #1e3c72;
+            margin-bottom: 15px;
+        }
+        
+        .action-card h5 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .action-card p {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .btn-kawasaki {
+            background: #1e3c72;
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+        
+        .btn-kawasaki:hover {
+            background: #2a5298;
+        }
+        
+        .quick-stats {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .search-bar {
+            background: white;
+            border-radius: 30px;
+            padding: 10px 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .search-input {
+            border: none;
+            outline: none;
+            flex: 1;
+            padding: 8px 0;
+        }
+        
+        .search-btn {
+            background: #1e3c72;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            color: white;
+        }
+        
+        .chat-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #1e3c72;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .chat-window {
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            width: 320px;
+            height: 400px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 1001;
+            overflow: hidden;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-outline-light {
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        .btn-outline-light:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 12px;
+            border-top: 1px solid #ddd;
+            margin-top: 30px;
+        }
+
+        /* Welcome Animation Styles */
+.welcome-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(0,0,0,0.7));
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s ease;
+}
+
+.welcome-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.welcome-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    max-width: 500px;
+    transform: scale(0.8);
+    transition: transform 0.5s ease;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.welcome-overlay.active .welcome-card {
+    transform: scale(1);
+}
+
+.welcome-card i {
+    font-size: 80px;
+    color: #00ff00;
+    margin-bottom: 20px;
+}
+
+.welcome-card h2 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.welcome-card p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.welcome-btn {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.welcome-btn:hover {
+    transform: scale(1.05);
+}
+
+@keyframes confetti {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+.confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 20px;
+    background: #00ff00;
+    top: -20px;
+    animation: confetti 3s ease-in-out forwards;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/home">
+                <i class="fas fa-motorcycle"></i> KAWASAKI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/bikes">Bikes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/scooters">Scooters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my_bookings">My Bookings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/predict_price">Price Predictor</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center ms-3">
+                    <div class="position-relative me-3">
+                        <i class="fas fa-bell fa-lg text-white" style="cursor: pointer;" onclick="showNotifications()"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <a href="/home" class="btn btn-outline-light btn-sm me-2">Home</a>
+                    <a href="/dashboard" class="btn btn-outline-light btn-sm me-2">Dashboard</a>
+                    <a href="/shop" class="btn btn-success btn-sm me-2">
+                        <i class="fas fa-shopping-cart"></i> Shop
+                    </a>
+                    <span class="text-white me-2">Hi, {{ user.full_name }}</span>
+                    <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="search-bar d-flex align-items-center">
+    <i class="fas fa-search text-muted me-2"></i>
+    <input type="text" class="search-input" placeholder="Search bikes, parts, or clothing..." id="globalSearch">
+    <button class="search-btn ms-2" onclick="performSearch()"><i class="fas fa-search"></i></button>
+</div>
+        
+        <div class="welcome-banner">
+            <h4><i class="fas fa-tachometer-alt"></i> Dashboard</h4>
+            <p class="mb-0">Welcome back, {{ user.full_name }}! Manage your test rides, bookings, and explore Kawasaki motorcycles.</p>
+        </div>
+        
+        <!-- Stats Row -->
+        <div class="row">
+    <div class="col-md-3">
+        <div class="stat-card" onclick="window.location.href='/bikes'">
+            <i class="fas fa-motorcycle"></i>
+            <div class="number">6+</div>
+            <div class="label">Premium Bikes</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card" onclick="window.location.href='/scooters'">
+            <i class="fas fa-bicycle"></i>
+            <div class="number">2</div>
+            <div class="label">Scooters</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card" onclick="window.location.href='/my_bookings?type=testride'">
+            <i class="fas fa-motorcycle"></i>
+            <div class="number" id="testRideCount">0</div>
+            <div class="label">Test Rides</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card" onclick="window.location.href='/my_bookings?type=booking'">
+            <i class="fas fa-calendar-check"></i>
+            <div class="number" id="bikeBookingCount">0</div>
+            <div class="label">Bike Bookings</div>
+        </div>
+    </div>
+</div>
+
+<!-- Second Row for Parts and Clothing Orders -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="stat-card" onclick="window.location.href='/my_bookings?type=parts'">
+            <i class="fas fa-tools"></i>
+            <div class="number" id="partsOrderCount">0</div>
+            <div class="label">Parts Orders</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card" onclick="window.location.href='/my_bookings?type=clothing'">
+            <i class="fas fa-tshirt"></i>
+            <div class="number" id="clothingOrderCount">0</div>
+            <div class="label">Clothing Orders</div>
+        </div>
+    </div>
+</div>
+        
+        <!-- Quick Stats -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="quick-stats">
+                    <h6><i class="fas fa-chart-line"></i> Your Activity</h6>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="stat-value" id="totalSpent">₹0</div>
+                            <small>Total Spent</small>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-value" id="activeBookings">0</div>
+                            <small>Active</small>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-value" id="completedRides">0</div>
+                            <small>Completed</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="quick-stats">
+                    <h6><i class="fas fa-star"></i> Recent Activity</h6>
+                    <div class="small">
+                        <div><i class="fas fa-check-circle me-1"></i> Test ride booked</div>
+                        <div><i class="fas fa-eye me-1"></i> Viewed Z900</div>
+                        <div><i class="fas fa-robot me-1"></i> AI chat: Financing</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AI Recommendations - Upgraded -->
+<div class="ai-card">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <span class="ai-badge"><i class="fas fa-microchip"></i> POWERED BY AI</span>
+            <h4 class="mt-2 mb-0" style="color: #1e3c72;">🤖 Personalized Recommendations</h4>
+            <p class="text-muted mb-0 small">Based on your browsing history and preferences</p>
+        </div>
+        <button class="btn btn-kawasaki btn-sm" onclick="refreshRecommendations()" style="padding: 8px 20px;">
+            <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+    </div>
+    
+    <div class="row" id="recommendationsRow">
+        {% for bike in recommendations %}
+        <div class="col-md-3 mb-3">
+            <div class="recommendation-item" onclick="window.location.href='/bike/{{ bike }}'">
+                <div class="recommendation-icon">
+                    <i class="fas fa-motorcycle"></i>
+                </div>
+                <h6 class="mt-2 mb-1">{{ bike }}</h6>
+                <div class="match-score">
+                    <i class="fas fa-star text-warning"></i>
+                    <i class="fas fa-star text-warning"></i>
+                    <i class="fas fa-star text-warning"></i>
+                    <i class="fas fa-star text-warning"></i>
+                    <i class="fas fa-star-half-alt text-warning"></i>
+                    <span class="ms-1 small">94% match</span>
+                </div>
+                <button class="btn btn-sm view-btn mt-2">View Details →</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+        
+        <!-- Quick Actions -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="action-card" onclick="window.location.href='/bikes'">
+                    <i class="fas fa-motorcycle"></i>
+                    <h5>Browse Bikes</h5>
+                    <p>Explore our range</p>
+                    <button class="btn-kawasaki">View</button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="action-card" onclick="window.location.href='/book_test_ride'">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h5>Test Ride</h5>
+                    <p>Book a test ride</p>
+                    <button class="btn-kawasaki">Book</button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="action-card" onclick="window.location.href='/my_bookings'">
+                    <i class="fas fa-list-alt"></i>
+                    <h5>My Bookings</h5>
+                    <p>View all bookings</p>
+                    <button class="btn-kawasaki">View</button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="action-card" onclick="window.open('https://www.google.com/maps/search/Kawasaki+showroom+near+me', '_blank')">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h5>Find Showroom</h5>
+                    <p>Locate nearest dealer</p>
+                    <button class="btn-kawasaki">Locate</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-3">
+            <div class="col-md-3">
+                <div class="action-card" onclick="window.location.href='/compare'">
+                    <i class="fas fa-balance-scale"></i>
+                    <h5>Compare Bikes</h5>
+                    <p>Compare models</p>
+                    <button class="btn-kawasaki">Compare</button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="action-card" onclick="window.location.href='/financing'">
+                    <i class="fas fa-calculator"></i>
+                    <h5>Financing</h5>
+                    <p>Calculate EMI</p>
+                    <button class="btn-kawasaki">Calculate</button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="action-card" onclick="window.location.href='/service'">
+                    <i class="fas fa-tools"></i>
+                    <h5>Service</h5>
+                    <p>Book service</p>
+                    <button class="btn-kawasaki">Book</button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="action-card" onclick="window.location.href='/predict_price'">
+                    <i class="fas fa-chart-line"></i>
+                    <h5>Price Predictor</h5>
+                    <p>ML based prediction</p>
+                    <button class="btn-kawasaki">Predict</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2026 Kawasaki Motors India | Let the Good Times Roll</p>
+    </footer>
+    
+    <!-- Chat -->
+    <div class="chat-toggle" onclick="toggleChat()">
+        <i class="fas fa-robot fa-lg text-white"></i>
+    </div>
+    
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header p-2 bg-dark text-white d-flex justify-content-between">
+            <span><i class="fas fa-robot"></i> AI Assistant</span>
+            <span style="cursor:pointer" onclick="toggleChat()">✕</span>
+        </div>
+        <div class="chat-messages p-2" id="chatMessages" style="flex:1; overflow-y:auto; height:300px;">
+            <div class="bg-light p-2 rounded mb-2">Hello! Ask me about Kawasaki bikes!</div>
+        </div>
+        <div class="chat-input-area p-2 border-top d-flex">
+            <input type="text" id="chatInput" class="form-control form-control-sm" placeholder="Type...">
+            <button class="btn btn-primary btn-sm ms-2" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Search
+        document.getElementById('globalSearch')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                window.location.href = `/bikes?search=${encodeURIComponent(this.value)}`;
+            }
+        });
+
+        // Search function
+function performSearch() {
+    const query = document.getElementById('globalSearch').value.trim();
+    if (query) {
+        window.location.href = `/bikes?search=${encodeURIComponent(query)}`;
+    } else {
+        alert('Please enter a search term');
+    }
+}
+
+// Enter key search
+document.getElementById('globalSearch').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        performSearch();
+    }
+});
+        
+        // Load stats
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/user_stats');
+                const data = await res.json();
+                if(data.success) {
+                    document.getElementById('testRideCount').innerText = data.test_rides || 0;
+                    document.getElementById('bookingCount').innerText = data.bookings || 0;
+                    document.getElementById('totalSpent').innerText = '₹' + (data.total_spent || 0).toLocaleString();
+                    document.getElementById('activeBookings').innerText = data.active_bookings || 0;
+                    document.getElementById('completedRides').innerText = data.completed_rides || 0;
+                }
+            } catch(e) {}
+        }
+        
+        // Refresh recommendations
+        async function refreshRecommendations() {
+            const btn = event.target;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            const res = await fetch('/api/ai_recommendations');
+            const data = await res.json();
+            const row = document.getElementById('recommendationsRow');
+            row.innerHTML = '';
+            data.recommendations.forEach(bike => {
+                row.innerHTML += `<div class="col-md-3 mb-3"><div class="recommendation-item" onclick="window.location.href='/bike/${bike}'"><i class="fas fa-motorcycle"></i><h6>${bike}</h6><small>Recommended</small></div></div>`;
+            });
+            btn.innerHTML = 'Refresh';
+        }
+        
+        // Chat
+        async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if(!msg) return;
+    const chatDiv = document.getElementById('chatMessages');
+    chatDiv.innerHTML += `<div class="bg-primary text-white p-2 rounded mb-2 text-end">${msg}</div>`;
+    input.value = '';
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+    
+    chatDiv.innerHTML += `<div class="bg-light p-2 rounded mb-2" id="typing"><i class="fas fa-circle-notch fa-spin"></i> AI is thinking...</div>`;
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+    
+    const res = await fetch('/ai_chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: msg})
+    });
+    const data = await res.json();
+    
+    document.getElementById('typing')?.remove();
+    // Convert newlines to <br> for better display
+    const formattedResponse = data.response.replace(/\n/g, '<br>');
+    chatDiv.innerHTML += `<div class="bg-light p-2 rounded mb-2">${formattedResponse}</div>`;
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+}
+
+        function toggleChat() {
+            const win = document.getElementById('chatWindow');
+            win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+        }
+        
+        function showNotifications() {
+            alert("📢 Notifications\n\n✅ Your test ride is confirmed\n🛒 Order #123 shipped\n⭐ New model launched");
+        }
+        
+        async function loadStats() {
+    try {
+        const res = await fetch('/api/user_stats');
+        const data = await res.json();
+        if(data.success) {
+            document.getElementById('testRideCount').innerText = data.test_rides || 0;
+            document.getElementById('bikeBookingCount').innerText = data.bike_bookings || 0;
+            document.getElementById('partsOrderCount').innerText = data.part_orders || 0;
+            document.getElementById('clothingOrderCount').innerText = data.clothing_orders || 0;
+        }
+    } catch(e) {
+        console.log('Error loading stats');
+        document.getElementById('testRideCount').innerText = '2';
+        document.getElementById('bikeBookingCount').innerText = '1';
+        document.getElementById('partsOrderCount').innerText = '3';
+        document.getElementById('clothingOrderCount').innerText = '2';
+    }
+}
+        
+        loadStats();
+
+// ========== FULL SCREEN ANIMATED WELCOME ==========
+
+// Add CSS for full screen welcome
+const welcomeStyles = document.createElement('style');
+welcomeStyles.textContent = `
+    /* Full Screen Welcome Overlay */
+    .fullscreen-welcome {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeInBg 0.8s ease;
+        overflow: hidden;
+    }
+    
+    @keyframes fadeInBg {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    /* Animated Background Particles */
+    .welcome-particle {
+        position: absolute;
+        background: rgba(0, 255, 0, 0.3);
+        border-radius: 50%;
+        animation: floatParticle linear infinite;
+    }
+    
+    @keyframes floatParticle {
+        0% {
+            transform: translateY(100vh) rotate(0deg);
+            opacity: 0;
+        }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% {
+            transform: translateY(-100vh) rotate(720deg);
+            opacity: 0;
+        }
+    }
+    
+    /* Welcome Content Container */
+    .welcome-container {
+        text-align: center;
+        z-index: 10;
+        animation: scaleUp 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    
+    @keyframes scaleUp {
+        0% {
+            transform: scale(0.3);
+            opacity: 0;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+    
+    /* Animated Icon */
+    .welcome-icon {
+        font-size: 120px;
+        margin-bottom: 30px;
+        animation: bounceIcon 0.8s ease infinite;
+    }
+    
+    @keyframes bounceIcon {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    /* Glowing Text */
+    .welcome-title {
+        font-size: 48px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, #00ff00, #00cc00, #009900);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: glow 1.5s ease-in-out infinite alternate;
+    }
+    
+    @keyframes glow {
+        from { text-shadow: 0 0 10px rgba(0,255,0,0.5); }
+        to { text-shadow: 0 0 30px rgba(0,255,0,0.8); }
+    }
+    
+    /* Subtitle Animation */
+    .welcome-subtitle {
+        font-size: 20px;
+        color: rgba(255,255,255,0.9);
+        margin-bottom: 30px;
+        animation: slideUp 0.8s ease 0.3s both;
+    }
+    
+    @keyframes slideUp {
+        from {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
+    /* Sparkle Button */
+    .welcome-button {
+        background: linear-gradient(135deg, #00ff00, #00cc00);
+        border: none;
+        padding: 14px 40px;
+        border-radius: 50px;
+        font-size: 18px;
+        font-weight: bold;
+        color: black;
+        cursor: pointer;
+        transition: all 0.3s;
+        animation: pulse 1s ease infinite;
+        box-shadow: 0 0 20px rgba(0,255,0,0.5);
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    .welcome-button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 40px rgba(0,255,0,0.8);
+    }
+    
+    /* Firework effect */
+    .firework {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        animation: explode 1s ease-out forwards;
+    }
+    
+    @keyframes explode {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(50);
+            opacity: 0;
+        }
+    }
+    
+    /* Sparkle stars */
+    .sparkle {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: #00ff00;
+        border-radius: 50%;
+        animation: twinkle 1s ease infinite;
+    }
+    
+    @keyframes twinkle {
+        0%, 100% { opacity: 0; transform: scale(1); }
+        50% { opacity: 1; transform: scale(2); }
+    }
+`;
+document.head.appendChild(welcomeStyles);
+
+function createParticles() {
+    for (let i = 0; i < 150; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'welcome-particle';
+        particle.style.width = Math.random() * 8 + 2 + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDuration = Math.random() * 5 + 3 + 's';
+        particle.style.animationDelay = Math.random() * 5 + 's';
+        particle.style.backgroundColor = `rgba(0, 255, 0, ${Math.random() * 0.5 + 0.2})`;
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 8000);
+    }
+}
+
+function createFireworks(x, y) {
+    for (let i = 0; i < 30; i++) {
+        const firework = document.createElement('div');
+        firework.className = 'firework';
+        firework.style.left = x + 'px';
+        firework.style.top = y + 'px';
+        firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        document.body.appendChild(firework);
+        setTimeout(() => firework.remove(), 1000);
+    }
+}
+
+function createSparkles() {
+    for (let i = 0; i < 100; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.style.left = Math.random() * 100 + '%';
+        sparkle.style.top = Math.random() * 100 + '%';
+        sparkle.style.animationDelay = Math.random() * 2 + 's';
+        document.body.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 2000);
+    }
+}
+
+function showFullScreenWelcome(userName, isNewUser) {
+    // Create full screen overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'fullscreen-welcome';
+    
+    // Create particles background (same for both)
+    createParticles();
+    
+    // Different content based on user type
+    let title, subtitle, buttonText, icon;
+    
+    if (isNewUser) {
+        icon = 'fa-motorcycle';
+        title = 'WELCOME TO KAWASAKI FAMILY!';
+        subtitle = `We're thrilled to have you, ${userName}! Get ready for an amazing journey. 🏍️`;
+        buttonText = 'Start Your Journey →';
+    } else {
+        icon = 'fa-motorcycle';
+        title = 'WELCOME BACK!';
+        subtitle = `Great to see you again, ${userName}! Ready for another thrilling ride? 🎉`;
+        buttonText = 'Enter Dashboard →';
+    }
+    
+    overlay.innerHTML = `
+        <div class="welcome-container">
+            <div class="welcome-icon">
+                <i class="fas ${icon}"></i>
+            </div>
+            <h1 class="welcome-title">${title}</h1>
+            <p class="welcome-subtitle">${subtitle}</p>
+            <button class="welcome-button" id="welcomeEnterBtn">${buttonText}</button>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    
+    // Create fireworks and sparkles (SAME for both)
+    setTimeout(() => {
+        createFireworks(window.innerWidth / 2, window.innerHeight / 2);
+        setTimeout(() => {
+            createFireworks(window.innerWidth / 3, window.innerHeight / 3);
+            createFireworks(window.innerWidth * 2 / 3, window.innerHeight / 3);
+        }, 300);
+    }, 500);
+    createSparkles();
+    
+    // Handle enter button click
+    const enterBtn = document.getElementById('welcomeEnterBtn');
+    if (enterBtn) {
+        enterBtn.onclick = () => {
+            overlay.style.animation = 'fadeOutBg 0.5s ease forwards';
+            setTimeout(() => overlay.remove(), 500);
+        };
+    }
+    
+    // Auto remove after 6 seconds
+    setTimeout(() => {
+        if (overlay && overlay.remove) overlay.remove();
+    }, 6000);
+}
+
+// Add fadeOutBg keyframe
+const fadeOutStyle = document.createElement('style');
+fadeOutStyle.textContent = `
+    @keyframes fadeOutBg {
+        from { opacity: 1; }
+        to { opacity: 0; visibility: hidden; }
+    }
+`;
+document.head.appendChild(fadeOutStyle);
+
+// Check if user is new or returning
+async function checkUserStatus() {
+    try {
+        const response = await fetch('/api/user_login_status');
+        const data = await response.json();
+        
+        if (data.success) {
+            // Show full screen welcome for both user types
+            showFullScreenWelcome(data.user_name, data.is_new_user);
+        }
+    } catch(e) {
+        console.log('Welcome screen skipped:', e);
+    }
+}
+
+// Call on page load
+checkUserStatus();
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
